@@ -1,5 +1,8 @@
 package BLL;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+
 import NET.LANClientThread;
 import NET.LANServerThread;
 
@@ -30,12 +33,39 @@ public class BLL_RemoteScreenForm {
 				
 	}
 	
-	public void SendClick(float xRatio, float yRatio) {
+	public void SendClick(MouseEvent e, boolean type) {
+		//type=TRUE->ClickDown| type=FALSE->MouseUp
 		if(LANclient!=null) {
-			LANclient.SendClick(xRatio, yRatio);
+			if(type==true) {
+				if (e.getButton() == MouseEvent.BUTTON1){//left
+					LANclient.SendMessage("CLK-LEFT-DOWN");
+	            } else if (e.getButton() == MouseEvent.BUTTON2){//midle
+	            	LANclient.SendMessage("CLK-MID-DOWN");
+	            } else if (e.getButton() == MouseEvent.BUTTON3) {//right
+	            	LANclient.SendMessage("CLK-RIGHT-DOWN");
+	            }
+			}else {
+				if (e.getButton() == MouseEvent.BUTTON1){//left
+					LANclient.SendMessage("CLK-LEFT-UP");
+	            } else if (e.getButton() == MouseEvent.BUTTON2){//midle
+	            	LANclient.SendMessage("CLK-MID-UP");
+	            } else if (e.getButton() == MouseEvent.BUTTON3) {//right
+	            	LANclient.SendMessage("CLK-RIGHT-UP");
+	            }
+			}
 		}
 	}
+	public void SendMouseMove(float xRatio, float yRatio) {
+		LANclient.SendMessage("MMOVE-"+xRatio+"-"+yRatio);
+	}
 	
+	public void SendMouseWheel(MouseWheelEvent e) {	
+		if (e.getWheelRotation() > 0)
+			LANclient.SendMessage("MWHEEL-DOWN-"+e.getScrollAmount());
+		else
+			LANclient.SendMessage("MWHEEL-UP-"+e.getScrollAmount());
+		//System.out.println(e.getScrollAmount());
+	}
 	public void AnnounceConnectError(String errMess) {
 		System.out.println(errMess);
 	}

@@ -164,11 +164,11 @@ public class LANClientThread extends Thread{
 		
 	}
 	
-	public void SendClick(float xRatio, float yRatio) {
-		System.out.println("Send click "+xRatio+":"+yRatio);
+	public void SendMessage(String message) {
 		if(s!=null&&oos!=null) {
 			try {
-				oos.writeObject("RequireConnect:"+pass);
+				oos.writeObject(message);
+				oos.flush();
 				oos.reset();
 			}catch (Exception e) {}
 		}

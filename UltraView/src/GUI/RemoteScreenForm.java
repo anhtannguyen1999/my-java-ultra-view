@@ -25,6 +25,9 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelListener;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
@@ -98,7 +101,6 @@ public class RemoteScreenForm extends JFrame {
 				isOpened=true;
 				//Goi BLL de mo thread get hinh
 				bll_RemoteScreenForm.ConnectRemoteTo(ip, port, pass);
-				//System.out.println("Open");
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -114,14 +116,38 @@ public class RemoteScreenForm extends JFrame {
 		setContentPane(contentPane);
 		
 		panel = new JPanel();
-		panel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				float xRatio=(float) (arg0.getX()*1.0/panel.getWidth());
-				float yRatio=(float)(arg0.getY()*1.0/panel.getHeight());
-				bll_RemoteScreenForm.SendClick(xRatio, yRatio);
+		panel.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent arg0) {
+				bll_RemoteScreenForm.SendMouseWheel(arg0);
 			}
 		});
+		panel.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+				float xRatio=(float) (arg0.getX()*1.0/panel.getWidth());
+				float yRatio=(float)(arg0.getY()*1.0/panel.getHeight());	
+				bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+				
+			}
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				float xRatio=(float) (e.getX()*1.0/panel.getWidth());
+				float yRatio=(float)(e.getY()*1.0/panel.getHeight());	
+				bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+			}
+		});
+		panel.addMouseListener(new MouseAdapter() {			
+			@Override
+			public void mousePressed(MouseEvent e) { //Bat luc nhan xuong
+				bll_RemoteScreenForm.SendClick(e,true);//true=>mouse down
+			}
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				bll_RemoteScreenForm.SendClick(e,false);//false=>mouse up
+				//System.out.println("clk");
+			}
+		});
+		//panel.addMouse
 		//panel.setBackground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(

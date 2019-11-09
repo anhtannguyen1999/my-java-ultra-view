@@ -1,6 +1,9 @@
 package NET;
 
+import java.awt.Robot;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,6 +13,7 @@ import java.net.Socket;
 
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
+import OtherComponent.MouseKeyExcuter;
 import OtherComponent.ScreenCapturer;
 
 public class LANServerThread extends Thread {
@@ -23,20 +27,77 @@ public class LANServerThread extends Thread {
 	private static ObjectInputStream ois;
 	private static OutputStream os;
 	private static ObjectOutputStream oos;
-	
 	private static BufferedOutputStream bout;// = new BufferedOutputStream(os);
-
-    public LANServerThread(int port, String pass) {
+	private static MouseKeyExcuter mouseKeyExcuter;
+	private LANServerMessageReceiver messageReceiver;
+	private boolean runningMessageReceive=false;
+    
+	public LANServerThread(int port, String pass) {
 		// TODO Auto-generated constructor stub
 		this.port=port;
 		this.pass=pass;
+		messageReceiver=new LANServerMessageReceiver();
+		mouseKeyExcuter=new MouseKeyExcuter();
 	}
 	@Override
 	public void run() {
 		super.run();
 		StartServer();
 	}
-	
+	public void ResetServer() {
+		try {
+			runningMessageReceive=false;
+			//messageReceiver=null; //Khong bo cai nay vi duoc khai bao o tren ham khoi tao
+			messageReceiver=new LANServerMessageReceiver();
+			if(oos!=null)
+				try {
+					oos.reset();
+					oos.close();
+				}catch (Exception e) {}
+			if(bout!=null)
+				try {
+					
+					bout.close();
+				}catch (Exception e) {}			
+			if(os!=null)
+				try {
+					
+					os.close();
+				}catch (Exception e) {}			
+			if(ois!=null)
+				try {
+					ois.reset();
+					ois.close();
+				}catch (Exception e) {}			
+			if(is!=null)
+				try {
+					is.reset();
+					is.close();
+				}catch (Exception e) {}
+			if(s!=null)
+				try {
+					
+					s.close();
+				}catch (Exception e) {}
+			
+			oos=null;
+			bout=null;
+			os=null;
+			ois=null;
+			is=null;
+			s=null;
+			
+			ss.close();
+			ss=null;
+			clientInfor=null;
+			arrayLANImageInforObject.Clear();
+			java.lang.Runtime.getRuntime().gc();
+			StartServer();
+		} catch (Exception e) {
+			System.out.println("Reset server faild");
+			e.printStackTrace();
+		}
+	}
 	private void StartServer() {
 		try {
 			//Khoi tao server
@@ -48,6 +109,7 @@ public class LANServerThread extends Thread {
 			
 			while (clientInfor==null) {
 				//Bat client socket doi ket noi
+				System.out.println("Doi client yeu cau ket noi");
 				s = ss.accept();
 				System.out.println("Co client ket noi");
 				is = s.getInputStream();
@@ -96,6 +158,10 @@ public class LANServerThread extends Thread {
 	private DTO_ArrayLANImageInforObject arrayLANImageInforObject=null;
 	private void LoopSendImage() {
 		ScreenCapturer screenCapturer=new ScreenCapturer();
+
+		runningMessageReceive=true;		
+		messageReceiver.start();
+		int countFaild=0;
 		while(true) {
 			try {
     	         Thread.sleep(40);
@@ -112,8 +178,11 @@ public class LANServerThread extends Thread {
     	 			oos.reset();
     	 			java.lang.Runtime.getRuntime().gc();
     	 		} catch (Exception e) {
-    	 			
-    	 			System.out.println("Send obj to client failed!");
+    	 			countFaild++;
+    	 			if(countFaild>=10) {
+        	 			System.out.println("Send obj to client failed!-Reset Server");
+        	 			break;
+    	 			}
     	 		}
                  
 			} 
@@ -122,8 +191,34 @@ public class LANServerThread extends Thread {
 	               
     	    }
 		}
+		ResetServer();
 		
 	}
+	
+	public class LANServerMessageReceiver extends Thread{
+		@Override
+		public void run() {
+			super.run();
+			int countFaild=0;
+			while(runningMessageReceive) {
+				String message="";
+				try {
+					message = (String) ois.readObject();
+					mouseKeyExcuter.ExcuteByMessage(message);
+				} catch (EOFException e) { //Bat Exception khi mat ket noi client
+					countFaild++;
+					if(countFaild>=10)
+						return;
+				}
+				catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+				
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
 		LANServerThread lanServerThread=new LANServerThread(1999, "ahihi");
 		lanServerThread.run();
