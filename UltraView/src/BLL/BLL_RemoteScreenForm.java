@@ -66,6 +66,15 @@ public class BLL_RemoteScreenForm {
 			LANclient.SendMessage("MWHEEL-UP-"+e.getScrollAmount());
 		//System.out.println(e.getScrollAmount());
 	}
+	
+	public void SendKeyEvent(int keyCode,boolean type) {//type=true->keyPress | type->false->keyRelease
+		if(type==true) {
+			LANclient.SendMessage("KEY-DOWN-"+keyCode);
+		}
+		else {
+			LANclient.SendMessage("KEY-UP-"+keyCode);
+		}
+	}
 	public void AnnounceConnectError(String errMess) {
 		System.out.println(errMess);
 	}

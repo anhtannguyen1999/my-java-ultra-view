@@ -28,6 +28,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
@@ -66,6 +68,16 @@ public class RemoteScreenForm extends JFrame {
 	//Khoi tao GUI
 	public static JPanel panel;
 	public RemoteScreenForm(String ip, String port, String pass) {
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				bll_RemoteScreenForm.SendKeyEvent(arg0.getKeyCode(), true);
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				bll_RemoteScreenForm.SendKeyEvent(e.getKeyCode(), false);
+			}
+		});
 		this.ip=ip;
 		this.port=port;
 		this.pass=pass;

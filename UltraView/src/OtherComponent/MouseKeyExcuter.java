@@ -42,19 +42,19 @@ public class MouseKeyExcuter {
 					robot.mousePress(leftMark);
 				}else if(arr[2].equals("UP")) {
 					robot.mouseRelease(leftMark);
-				}
+				}else {}
 			}else if(arr[1].equals("MID")) {
 				if(arr[2].equals("DOWN")) {
 					robot.mousePress(midMark);
 				}else if(arr[2].equals("UP")) {
 					robot.mouseRelease(midMark);
-				}
+				}else {}
 			}else if(arr[1].equals("RIGHT")) {
 				if(arr[2].equals("DOWN")) {
 					robot.mousePress(rightMark);
 				}else if(arr[2].equals("UP")) {
 					robot.mouseRelease(rightMark);
-				}
+				}else {}
 			}
 		}
 		//Wheel
@@ -64,12 +64,18 @@ public class MouseKeyExcuter {
 			if(arr[1].equals("DOWN")) {
 				robot.mouseWheel(amount);
 			}
-			else if(arr[1].equals("UP")) {
+			else {// if(arr[1].equals("UP")) {
 				robot.mouseWheel(-amount);
 			}
 		}
-		else if(arr[0].equals("Cai ney cho keys")) {
-	
+		//Key
+		else if(arr[0].equals("KEY")) {
+			int keycode=Integer.parseInt(arr[2]);
+			if(arr[1].equals("DOWN")) {
+				robot.keyPress(keycode);
+			}else{ //if(arr[1].equals("UP")) {
+				robot.keyRelease(keycode);
+			}
 		}
 	}
 }
