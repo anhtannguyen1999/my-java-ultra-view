@@ -30,6 +30,10 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JCheckBox;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.LineBorder;
+import java.awt.Font;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
@@ -66,16 +70,22 @@ public class RemoteScreenForm extends JFrame {
 	private String ip,port,pass;
 
 	//Khoi tao GUI
-	public static JPanel panel;
+	public JPanel panel;
+	public JCheckBox chbxMouse;
+	public JCheckBox chbxKeys;
+	public JCheckBox chbxVoice;
+	
 	public RemoteScreenForm(String ip, String port, String pass) {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				bll_RemoteScreenForm.SendKeyEvent(arg0.getKeyCode(), true);
+				if(chbxKeys.isSelected())
+					bll_RemoteScreenForm.SendKeyEvent(arg0.getKeyCode(), true);
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				bll_RemoteScreenForm.SendKeyEvent(e.getKeyCode(), false);
+				if(chbxKeys.isSelected())
+					bll_RemoteScreenForm.SendKeyEvent(e.getKeyCode(), false);
 			}
 		});
 		this.ip=ip;
@@ -128,52 +138,81 @@ public class RemoteScreenForm extends JFrame {
 		setContentPane(contentPane);
 		
 		panel = new JPanel();
+		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent arg0) {
-				bll_RemoteScreenForm.SendMouseWheel(arg0);
+				if(chbxMouse.isSelected())
+					bll_RemoteScreenForm.SendMouseWheel(arg0);
 			}
 		});
 		panel.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseMoved(MouseEvent arg0) {
-				float xRatio=(float) (arg0.getX()*1.0/panel.getWidth());
-				float yRatio=(float)(arg0.getY()*1.0/panel.getHeight());	
-				bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+				if(chbxMouse.isSelected()) {
+					float xRatio=(float) (arg0.getX()*1.0/panel.getWidth());
+					float yRatio=(float)(arg0.getY()*1.0/panel.getHeight());	
+					bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+				}
 				
 			}
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				float xRatio=(float) (e.getX()*1.0/panel.getWidth());
-				float yRatio=(float)(e.getY()*1.0/panel.getHeight());	
-				bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+				if(chbxMouse.isSelected()) {
+					float xRatio=(float) (e.getX()*1.0/panel.getWidth());
+					float yRatio=(float)(e.getY()*1.0/panel.getHeight());	
+					bll_RemoteScreenForm.SendMouseMove(xRatio, yRatio);
+				}
 			}
 		});
 		panel.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mousePressed(MouseEvent e) { //Bat luc nhan xuong
-				bll_RemoteScreenForm.SendClick(e,true);//true=>mouse down
+				if(chbxMouse.isSelected())
+					bll_RemoteScreenForm.SendClick(e,true);//true=>mouse down
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				bll_RemoteScreenForm.SendClick(e,false);//false=>mouse up
+				if(chbxMouse.isSelected())
+					bll_RemoteScreenForm.SendClick(e,false);//false=>mouse up
 				//System.out.println("clk");
 			}
 		});
+				
+		chbxMouse = new JCheckBox("Mouse");
+		chbxMouse.setSelected(true);
+		chbxMouse.setFont(new Font("Calibri", Font.BOLD, 13));
+		
+		chbxKeys = new JCheckBox("Keys");
+		chbxKeys.setSelected(true);
+		chbxKeys.setFont(new Font("Calibri", Font.BOLD, 13));
+		
+		chbxVoice = new JCheckBox("Voice");
+		chbxVoice.setSelected(true);
+		chbxVoice.setFont(new Font("Calibri", Font.BOLD, 13));
 		//panel.addMouse
 		//panel.setBackground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 879, Short.MAX_VALUE)
+				.addComponent(panel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addContainerGap(698, Short.MAX_VALUE)
+					.addComponent(chbxMouse)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(chbxKeys)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(chbxVoice)
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
-					.addContainerGap())
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(chbxKeys)
+						.addComponent(chbxVoice)
+						.addComponent(chbxMouse)))
 		);
 		
 		panel.setLayout(new GridLayout(16, 16, 0, 0));
@@ -231,5 +270,4 @@ public class RemoteScreenForm extends JFrame {
 			
 		}
 	}
-		
 }
