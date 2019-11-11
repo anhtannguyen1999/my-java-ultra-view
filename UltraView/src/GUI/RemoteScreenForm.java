@@ -75,6 +75,7 @@ public class RemoteScreenForm extends JFrame {
 	public JCheckBox chbxKeys;
 	public JCheckBox chbxVoice;
 	
+	private int colRowNum=16;
 	public RemoteScreenForm(String ip, String port, String pass) {
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -103,16 +104,18 @@ public class RemoteScreenForm extends JFrame {
 				System.out.println("Resize");
 				
 				//panel.setSize(contentPane.getWidth()-25, contentPane.getHeight()-10);
-				panel.removeAll();
-				panel.updateUI();
-				for(int i=0;i<16;i++) 
-					for(int j=0;j<16;j++) {
-						JLabel label=new JLabel("");
-						//label.setBackground(Color.PINK);
-						panel.add(label);
-						label.setSize(300, 300);
-						
-					}
+				if(panel!=null) {
+					panel.removeAll();
+					panel.updateUI();
+					for(int i=0;i<colRowNum;i++) 
+						for(int j=0;j<colRowNum;j++) {
+							JLabel label=new JLabel("");
+							//label.setBackground(Color.PINK);
+							panel.add(label);
+							label.setSize(300, 300);
+							
+						}
+				}
 			}
 		});
 		
@@ -223,10 +226,10 @@ public class RemoteScreenForm extends JFrame {
 						.addComponent(chbxMouse)))
 		);
 		
-		panel.setLayout(new GridLayout(16, 16, 0, 0));
+		panel.setLayout(new GridLayout(colRowNum, colRowNum, 0, 0));
 		
-		for(int i=0;i<16;i++) 
-			for(int j=0;j<16;j++) {
+		for(int i=0;i<colRowNum;i++) 
+			for(int j=0;j<colRowNum;j++) {
 				JLabel label=new JLabel("");
 				//label.setBackground(Color.PINK);
 				panel.add(label);
@@ -244,9 +247,9 @@ public class RemoteScreenForm extends JFrame {
 			try {
 				for (DTO_LANImageInforObject oip : arrOIP.arr) {
 					Component[] components= panel.getComponents();
-					int index=oip.row*16+oip.column;
+					int index=oip.row*colRowNum+oip.column;
 					JLabel label=(JLabel)components[index];
-					Image dimg = oip.imageIcon.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+					Image dimg = oip.image.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
 					label.setIcon(new ImageIcon(dimg));
 					//panel.add(label00);
 				}
@@ -264,9 +267,9 @@ public class RemoteScreenForm extends JFrame {
 		if(lanIIO!=null) {
 			try {
 				Component[] components= panel.getComponents();
-				int index=lanIIO.row*16+lanIIO.column;
+				int index=lanIIO.row*colRowNum+lanIIO.column;
 				JLabel label=(JLabel)components[index];
-				Image dimg = lanIIO.imageIcon.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+				Image dimg = lanIIO.image.getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
 				label.setIcon(new ImageIcon(dimg));
 				//panel.add(label00);
 			}catch (Exception e) {

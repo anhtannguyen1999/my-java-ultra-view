@@ -35,7 +35,7 @@ public class ScreenCapturer {
 	private final int maxTimCountMatrixOIP=40;
 	private DTO_ArrayLANImageInforObject arrOIP;
 	
-	public byte[] CompressImageToByte(Image image) {
+	public byte[] CompressImageToByte(BufferedImage image) {
 		// The important part: Create in-memory stream
 		ByteArrayOutputStream compressed = new ByteArrayOutputStream();
 		ImageOutputStream outputStream;
@@ -106,6 +106,7 @@ public class ScreenCapturer {
          for(int i=0;i<16;i++)//row |
         	 for(int j=0;j<16;j++) { //column ->
         		 imgScrop = new ImageIcon(screenFullImage.getSubimage(j*gridWidth, i*gridHeight,gridWidth , gridHeight));
+        		 //imgScrop=screenFullImage.getSubimage(j*gridWidth, i*gridHeight,gridWidth , gridHeight);
         		 DTO_LANImageInforObject oip=new DTO_LANImageInforObject(imgScrop,j,i,gridWidth,gridHeight);
         		 if(timeCountMatrixOIP[j][i]==0) {
         			 matrixOIP[j][i]= oip;
@@ -129,7 +130,7 @@ public class ScreenCapturer {
 		int wStep=w/16, hStep=h/16;
 		for(int i=0;i<w-1;i+=wStep) {
 			for(int j=0;j<h-1;j+=hStep) {
-				if(((BufferedImage)oip.imageIcon.getImage()).getRGB(i,j)!=((BufferedImage)matrixOIP[x][y].imageIcon.getImage()).getRGB(i,j)) {
+				if(((BufferedImage)oip.image.getImage()).getRGB(i,j)!=((BufferedImage)matrixOIP[x][y].image.getImage()).getRGB(i,j)) {
 					return false;
 				}
 			}

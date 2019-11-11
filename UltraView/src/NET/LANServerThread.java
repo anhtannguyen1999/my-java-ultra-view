@@ -204,7 +204,7 @@ public class LANServerThread extends Thread {
 				String message="";
 				try {
 					message = (String) ois.readObject();
-					System.out.println(message);
+					//System.out.println(message);
 					mouseKeyExcuter.ExcuteByMessage(message);
 				} catch (EOFException e) { //Bat Exception khi mat ket noi client
 					countFaild++;

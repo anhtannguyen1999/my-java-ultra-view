@@ -42,7 +42,7 @@ public class LANClientThread extends Thread{
 	
 	private boolean isReceivingImage=false;
 	private int countFaild=0;
-	private final int maxCountFail=6;
+	private final int maxCountFail=30;//=6;
 	
 	public LANClientThread(String serverIP, int serverPort, String pass) {
 		this.serverIP=serverIP;
@@ -52,12 +52,27 @@ public class LANClientThread extends Thread{
 
 	public void run() {
 		StartClient();
-		System.out.println("Chay client thanh cong!");
-		try {
-			LoopReceiveImage();
-		} catch (Exception e) {
-			BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Mat ket noi!");
+		int countXacThucFaild=0;
+		while(!xacThucThanhCong) {
+			countXacThucFaild++;
+			try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {}
+			if(countXacThucFaild>200) {
+				DestroyClient();
+				StartClient();
+				countXacThucFaild=0;
+			}
 		}
+		if(xacThucThanhCong) {
+			System.out.println("Chay client thanh cong!");
+			try {
+				LoopReceiveImage();
+			} catch (Exception e) {
+				BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Mat ket noi!");
+			}
+		}
+		
 	}
 	
 	//Start and destroy client
@@ -92,6 +107,7 @@ public class LANClientThread extends Thread{
 	public void DestroyClient() {
 		System.out.println("Destroy client!");
 		isReceivingImage=false;
+		xacThucThanhCong=false;
 		try {
 			oos.close();
 			os.close();
@@ -117,7 +133,9 @@ public class LANClientThread extends Thread{
 			try {
 				ReceiveImage();
 				//System.out.println("Nhan hinh roi nhe!");
-			} catch (InterruptedException e) { e.printStackTrace();}
+			} catch (InterruptedException e) {
+				System.out.println("Loi nhan hinh in LoopReceiveImage");
+			}
 			
 		}
 	}
@@ -131,13 +149,13 @@ public class LANClientThread extends Thread{
 		
 		try {
 			//imi=(ImageIcon) ois.readObject();
-			
 			arrLANIIO=(DTO_ArrayLANImageInforObject) ois.readObject();
 		} catch (Exception e) { //Co gang tao client neu ket noi fail
 			System.out.println("Receive Image Failed!");
 			System.out.println(e.toString());
 			try {
-				StartClient();
+				//StartClient();
+				
 			}catch (Exception e2) {
 			}
 		}
@@ -174,11 +192,13 @@ public class LANClientThread extends Thread{
 		}
 	}
 	
+	private boolean xacThucThanhCong=false;
 	public class ThreadGuiNhanYeuCauXacThuc extends Thread{
 		public ThreadGuiNhanYeuCauXacThuc() {
 			// TODO Auto-generated constructor stub
 		}
 		public boolean isXacThuc=false;
+		public boolean dangGet=false;
 		@Override
 		public void run() {
 			super.run();
@@ -187,33 +207,42 @@ public class LANClientThread extends Thread{
 			getMessageXacThuc.start();
 			while(!isXacThuc) {
 				try {
-					Thread.sleep(10);
-					oos.writeObject("RequireConnect:"+pass);
-					oos.reset();
+					if(!dangGet) {
+						oos.writeObject("RequireConnect:"+pass);
+						oos.reset();
+						dangGet=true;
+						Thread.sleep(100);
+					}
+					
 				} catch (Exception e) {
 					// TODO: handle exception
+					System.out.println("Loi xac thuc connect");
 				}
 			}
 			java.lang.Runtime.getRuntime().gc();
 			System.out.println("Thread stop");
 		}
-		
 		public class GetMessageXacThuc extends Thread {
 			public void run() {
 				while (true) {
-					try {
-						is = s.getInputStream();
-						bin=new BufferedInputStream(is);
-						ois = new ObjectInputStream(bin);
-						String message= (String)ois.readObject();
-						if(message.equals("XacThucThanhCong")) {
-							isXacThuc=true;
-							return;
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						//e.printStackTrace();
-					} 
+					if(true) {
+						try {
+							is = s.getInputStream();
+							bin=new BufferedInputStream(is);
+							ois = new ObjectInputStream(bin);
+							String message= (String)ois.readObject();
+							if(message.equals("XacThucThanhCong")) {
+								isXacThuc=true;
+								xacThucThanhCong=true;
+								return;
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+							dangGet=false;
+						} 
+					}
+					
 				}
 			}
 		}
