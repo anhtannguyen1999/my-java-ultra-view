@@ -1,5 +1,3 @@
-package OtherComponent;
-
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -20,7 +18,15 @@ import javax.swing.ImageIcon;
 import DTO.DTO_ArrayLANImageInforObject;
 import DTO.DTO_LANImageInforObject;
 
-public class ScreenCapturer {
+public class TestScreenCapture {
+	public static void main(String[] args) throws InterruptedException {
+		TestScreenCapture testScreenCapture=new TestScreenCapture();
+		while(true) {
+			Thread.sleep(40);
+			testScreenCapture.GetLANScreenCaptureImageArray();
+		}
+	}
+	
 	private BufferedImage screenFullImage;
 	private Robot robot;
 	private Rectangle screenRect;

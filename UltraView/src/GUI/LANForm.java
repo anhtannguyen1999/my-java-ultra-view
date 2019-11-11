@@ -36,7 +36,7 @@ public class LANForm extends JFrame {
 	private JTextField txtPartnerIP;
 	private JTextField txtPartnerPort;
 	private JTextField txtPartnerPassword;
-	
+	private BLL_LANForm bll_LANForm;
 	/**
 	 * Launch the application.
 	 */
@@ -68,6 +68,7 @@ public class LANForm extends JFrame {
 	 * Create the frame.
 	 */
 	public LANForm() {
+		bll_LANForm=new BLL_LANForm();
 		//Event
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -139,7 +140,7 @@ public class LANForm extends JFrame {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				BLL_LANForm.ConnectAndShowRemoteForm(txtPartnerIP.getText(),txtPartnerPort.getText(),txtPartnerPassword.getText());
+				bll_LANForm.ConnectAndShowRemoteForm(txtPartnerIP.getText(),txtPartnerPort.getText(),txtPartnerPassword.getText());
 			}
 		});
 		GroupLayout gl_pnlRemoteForm = new GroupLayout(pnlRemoteForm);
@@ -217,7 +218,7 @@ public class LANForm extends JFrame {
 		btnOpenConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				BLL_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
+				bll_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
 			}
 		});
 		GroupLayout gl_pnlOpenCnn = new GroupLayout(pnlOpenCnn);

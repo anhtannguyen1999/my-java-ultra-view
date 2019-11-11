@@ -79,13 +79,17 @@ public class RemoteScreenForm extends JFrame {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
-				if(chbxKeys.isSelected())
+				if(chbxKeys.isSelected()) {
+					//System.out.println("kprs");
 					bll_RemoteScreenForm.SendKeyEvent(arg0.getKeyCode(), true);
+				}
 			}
 			@Override
 			public void keyReleased(KeyEvent e) {
-				if(chbxKeys.isSelected())
+				if(chbxKeys.isSelected()) {
+					//System.out.println("krlease");
 					bll_RemoteScreenForm.SendKeyEvent(e.getKeyCode(), false);
+				}
 			}
 		});
 		this.ip=ip;
@@ -138,6 +142,7 @@ public class RemoteScreenForm extends JFrame {
 		setContentPane(contentPane);
 		
 		panel = new JPanel();
+		
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
 		panel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent arg0) {
@@ -179,14 +184,17 @@ public class RemoteScreenForm extends JFrame {
 		});
 				
 		chbxMouse = new JCheckBox("Mouse");
+		chbxMouse.setFocusable(false);
 		chbxMouse.setSelected(true);
 		chbxMouse.setFont(new Font("Calibri", Font.BOLD, 13));
 		
 		chbxKeys = new JCheckBox("Keys");
+		chbxKeys.setFocusable(false);
 		chbxKeys.setSelected(true);
 		chbxKeys.setFont(new Font("Calibri", Font.BOLD, 13));
 		
 		chbxVoice = new JCheckBox("Voice");
+		chbxVoice.setFocusable(false);
 		chbxVoice.setSelected(true);
 		chbxVoice.setFont(new Font("Calibri", Font.BOLD, 13));
 		//panel.addMouse

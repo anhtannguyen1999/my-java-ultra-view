@@ -13,8 +13,8 @@ import java.net.Socket;
 
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
-import OtherComponent.MouseKeyExcuter;
-import OtherComponent.ScreenCapturer;
+import OS.MouseKeyExcuter;
+import OS.ScreenCapturer;
 
 public class LANServerThread extends Thread {
 	
@@ -204,6 +204,7 @@ public class LANServerThread extends Thread {
 				String message="";
 				try {
 					message = (String) ois.readObject();
+					System.out.println(message);
 					mouseKeyExcuter.ExcuteByMessage(message);
 				} catch (EOFException e) { //Bat Exception khi mat ket noi client
 					countFaild++;

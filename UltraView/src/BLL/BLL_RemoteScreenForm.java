@@ -56,7 +56,12 @@ public class BLL_RemoteScreenForm {
 		}
 	}
 	public void SendMouseMove(float xRatio, float yRatio) {
-		LANclient.SendMessage("MMOVE-"+xRatio+"-"+yRatio);
+		try {
+			LANclient.SendMessage("MMOVE-"+xRatio+"-"+yRatio);
+		}catch (Exception e) {//bat loi vi luc dau no send chuot cho server
+			// TODO: handle exception
+		}
+		
 	}
 	
 	public void SendMouseWheel(MouseWheelEvent e) {	
@@ -67,12 +72,19 @@ public class BLL_RemoteScreenForm {
 		//System.out.println(e.getScrollAmount());
 	}
 	
+	private String oldKeyEvent="";
+	private String newKeyEvent="";
 	public void SendKeyEvent(int keyCode,boolean type) {//type=true->keyPress | type->false->keyRelease
 		if(type==true) {
-			LANclient.SendMessage("KEY-DOWN-"+keyCode);
+			newKeyEvent="KEY-DOWN-"+keyCode;
 		}
 		else {
-			LANclient.SendMessage("KEY-UP-"+keyCode);
+			newKeyEvent="KEY-UP-"+keyCode;
+		}
+		if(!oldKeyEvent.equals(newKeyEvent)) {
+			System.out.println(newKeyEvent);
+			LANclient.SendMessage(newKeyEvent);
+			oldKeyEvent=newKeyEvent;
 		}
 	}
 	public void AnnounceConnectError(String errMess) {
