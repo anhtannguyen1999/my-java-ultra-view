@@ -37,7 +37,7 @@ public class LANClientThread extends Thread{
 	private ObjectOutputStream oos;
 	private InputStream is;
 	private ObjectInputStream ois;
-	private BufferedInputStream bin;
+	//private BufferedInputStream bin;
 	
 	
 	private boolean isReceivingImage=false;
@@ -149,6 +149,7 @@ public class LANClientThread extends Thread{
 		
 		try {
 			//imi=(ImageIcon) ois.readObject();
+			
 			arrLANIIO=(DTO_ArrayLANImageInforObject) ois.readObject();
 		} catch (Exception e) { //Co gang tao client neu ket noi fail
 			System.out.println("Receive Image Failed!");
@@ -228,8 +229,9 @@ public class LANClientThread extends Thread{
 					if(true) {
 						try {
 							is = s.getInputStream();
-							bin=new BufferedInputStream(is);
-							ois = new ObjectInputStream(bin);
+							//bin=new BufferedInputStream(is);
+							//ois = new ObjectInputStream(bin);
+							ois = new ObjectInputStream(is);
 							String message= (String)ois.readObject();
 							if(message.equals("XacThucThanhCong")) {
 								isXacThuc=true;

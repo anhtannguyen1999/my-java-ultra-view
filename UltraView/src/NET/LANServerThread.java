@@ -27,7 +27,7 @@ public class LANServerThread extends Thread {
 	private static ObjectInputStream ois;
 	private static OutputStream os;
 	private static ObjectOutputStream oos;
-	private static BufferedOutputStream bout;// = new BufferedOutputStream(os);
+	//private static BufferedOutputStream bout;// = new BufferedOutputStream(os);
 	private static MouseKeyExcuter mouseKeyExcuter;
 	private LANServerMessageReceiver messageReceiver;
 	private boolean runningMessageReceive=false;
@@ -54,11 +54,11 @@ public class LANServerThread extends Thread {
 					oos.reset();
 					oos.close();
 				}catch (Exception e) {}
-			if(bout!=null)
-				try {
-					
-					bout.close();
-				}catch (Exception e) {}			
+//			if(bout!=null)
+//				try {
+//					
+//					bout.close();
+//				}catch (Exception e) {}			
 			if(os!=null)
 				try {
 					
@@ -81,7 +81,7 @@ public class LANServerThread extends Thread {
 				}catch (Exception e) {}
 			
 			oos=null;
-			bout=null;
+			//bout=null;
 			os=null;
 			ois=null;
 			is=null;
@@ -128,10 +128,10 @@ public class LANServerThread extends Thread {
                 	os = s.getOutputStream();
                 	
                 	//Buffer
-    	        	bout = new BufferedOutputStream(os);
+    	        	//bout = new BufferedOutputStream(os);
 
-    				oos = new ObjectOutputStream(bout);
-    				
+    				//oos = new ObjectOutputStream(bout);
+                	oos = new ObjectOutputStream(os);
     				oos.writeObject("XacThucThanhCong");
     				oos.reset();
                 	//Goi ham gui image va break
