@@ -11,6 +11,8 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import BLL.BLL_LANAudioClient;
+import BLL.BLL_LANAudioServer;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import OS.MouseKeyExcuter;
@@ -31,7 +33,7 @@ public class LANServerThread extends Thread {
 	private static MouseKeyExcuter mouseKeyExcuter;
 	private LANServerMessageReceiver messageReceiver;
 	private boolean runningMessageReceive=false;
-    
+    private BLL_LANAudioServer bll_LANAudioServer;
 	public LANServerThread(int port, String pass) {
 		// TODO Auto-generated constructor stub
 		this.port=port;
@@ -136,11 +138,16 @@ public class LANServerThread extends Thread {
     				oos.reset();
                 	//Goi ham gui image va break
                 	try {
+                		//OK KET NOI
+                		bll_LANAudioServer= BLL_LANAudioServer.GetInstance(port+1);
+                		bll_LANAudioServer.SetClientIPAndPort(clientInfor.getIp(), clientInfor.getPort()+1);
+                		bll_LANAudioServer.StartReceivingAndSpeaking();
+                		bll_LANAudioServer.StartRecordingAndSending();
             			LoopSendImage();
             		} catch (Exception e) {
             			// TODO: handle exception
             			BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Khong co ket noi!");
-            			
+            			BLL_LANAudioServer.RemoveInstance();
             		}
                 }
                 else {

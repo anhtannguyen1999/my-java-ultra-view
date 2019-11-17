@@ -23,7 +23,13 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import BLL.BLL_LANAudioClient;
+import BLL.BLL_LANAudioServer;
 import BLL.BLL_LANForm;
+import javax.swing.JCheckBox;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class LANForm extends JFrame {
 
@@ -84,7 +90,7 @@ public class LANForm extends JFrame {
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		setBounds(100, 100, 650, 400);
+		setBounds(100, 100, 650, 375);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -99,22 +105,66 @@ public class LANForm extends JFrame {
 		pnlOpenCnn.setBorder(new MatteBorder(0, 0, 0, 1, (Color) new Color(0, 0, 0)));
 		
 		JPanel pnlRemoteForm = new JPanel();
+		
+		JCheckBox chbxSpeaker = new JCheckBox("Speaker");
+		chbxSpeaker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				try {
+					if(chbxSpeaker.isSelected()) {
+						System.out.println("ON");
+						BLL_LANAudioServer.GetInstance().StartReceivingAndSpeaking();
+					}else {
+						System.out.println("OFF");
+						BLL_LANAudioServer.GetInstance().StopReceivingAndSpeaking();
+					}
+				} catch (Exception e2) {
+					System.out.println("Remote screen form EXC: BLL_LANAudioClient.GetInstance() null");
+				}
+			}
+		});
+		
+		JCheckBox chbxMic = new JCheckBox("Mic");
+		chbxMic.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				try {
+					if(chbxMic.isSelected()) {
+						System.out.println("ON");
+						BLL_LANAudioServer.GetInstance().StartRecordingAndSending();
+					}else {
+						System.out.println("OFF");
+						BLL_LANAudioServer.GetInstance().StopRecordingAndSending();
+					}
+				} catch (Exception e2) {
+					System.out.println("Remote screen form EXC: BLL_LANAudioClient.GetInstance() null");
+				}
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(pnlOpenCnn, GroupLayout.PREFERRED_SIZE, 318, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(pnlRemoteForm, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE))
+					.addComponent(pnlRemoteForm, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(chbxMic)
+					.addGap(4)
+					.addComponent(chbxSpeaker)
+					.addContainerGap(488, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(pnlOpenCnn, GroupLayout.PREFERRED_SIZE, 287, GroupLayout.PREFERRED_SIZE)
-						.addComponent(pnlRemoteForm, GroupLayout.PREFERRED_SIZE, 286, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(17, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(pnlRemoteForm, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+						.addComponent(pnlOpenCnn, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(chbxSpeaker)
+						.addComponent(chbxMic))
+					.addContainerGap())
 		);
 		
 		JLabel lblNewLabel_5 = new JLabel("Remote PC");
@@ -233,18 +283,18 @@ public class LANForm extends JFrame {
 								.addComponent(lblNewLabel)))
 						.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 							.addGap(21)
-							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnOpenConnect, Alignment.TRAILING)
-								.addGroup(Alignment.TRAILING, gl_pnlOpenCnn.createSequentialGroup()
+							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
+								.addComponent(btnOpenConnect)
+								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 									.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
 										.addComponent(lblNewLabel_3)
 										.addComponent(lblNewLabel_2)
 										.addComponent(lblNewLabel_4))
 									.addGap(18)
 									.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
-										.addComponent(txtYourPassword, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-										.addComponent(txtYourIP, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-										.addComponent(txtYourPort, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+										.addComponent(txtYourPassword, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+										.addComponent(txtYourIP, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+										.addComponent(txtYourPort, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))
 									.addPreferredGap(ComponentPlacement.RELATED)))))
 					.addContainerGap(60, GroupLayout.PREFERRED_SIZE))
 		);
@@ -274,5 +324,4 @@ public class LANForm extends JFrame {
 		pnlOpenCnn.setLayout(gl_pnlOpenCnn);
 		contentPane.setLayout(gl_contentPane);
 	}
-
 }

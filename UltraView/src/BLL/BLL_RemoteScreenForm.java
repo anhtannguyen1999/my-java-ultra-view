@@ -14,7 +14,6 @@ public class BLL_RemoteScreenForm {
 		}
 		return instance;
 	}
-	
 	LANClientThread LANclient=null;
 	public void ConnectRemoteTo(String ip,String port,String pass) {
 		int iPort;

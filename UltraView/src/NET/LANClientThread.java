@@ -12,6 +12,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.swing.ImageIcon;
 
+import BLL.BLL_LANAudioClient;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import DTO.DTO_LANImageInforObject;
@@ -39,7 +40,7 @@ public class LANClientThread extends Thread{
 	private ObjectInputStream ois;
 	//private BufferedInputStream bin;
 	
-	
+	private BLL_LANAudioClient bll_LANAudioClient;//=BLL_LANAudioClient.GetInstance(clientPort, serverIP, serverPort)
 	private boolean isReceivingImage=false;
 	private int countFaild=0;
 	private final int maxCountFail=30;//=6;
@@ -66,9 +67,15 @@ public class LANClientThread extends Thread{
 		}
 		if(xacThucThanhCong) {
 			System.out.println("Chay client thanh cong!");
+			bll_LANAudioClient= BLL_LANAudioClient.GetInstance(s.getLocalPort()+1, serverIP, serverPort+1);
+			bll_LANAudioClient.StartSocketAndInitAudio();
+			bll_LANAudioClient.StartReceivingAndSpeaking();
+			bll_LANAudioClient.StartRecordingAndSending();
+			
 			try {
 				LoopReceiveImage();
 			} catch (Exception e) {
+				BLL_LANAudioClient.RemoveInstance();
 				BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Mat ket noi!");
 			}
 		}

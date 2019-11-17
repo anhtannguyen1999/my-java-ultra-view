@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import BLL.BLL_LANAudioClient;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import DTO.DTO_LANImageInforObject;
@@ -34,6 +35,12 @@ import javax.swing.JCheckBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.LineBorder;
 import java.awt.Font;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
@@ -73,7 +80,7 @@ public class RemoteScreenForm extends JFrame {
 	public JPanel panel;
 	public JCheckBox chbxMouse;
 	public JCheckBox chbxKeys;
-	public JCheckBox chbxVoice;
+	public JCheckBox chbxMic;
 	
 	private int colRowNum=16;
 	public RemoteScreenForm(String ip, String port, String pass) {
@@ -130,6 +137,7 @@ public class RemoteScreenForm extends JFrame {
 				isOpened=true;
 				//Goi BLL de mo thread get hinh
 				bll_RemoteScreenForm.ConnectRemoteTo(ip, port, pass);
+				
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -196,34 +204,71 @@ public class RemoteScreenForm extends JFrame {
 		chbxKeys.setSelected(true);
 		chbxKeys.setFont(new Font("Calibri", Font.BOLD, 13));
 		
-		chbxVoice = new JCheckBox("Voice");
-		chbxVoice.setFocusable(false);
-		chbxVoice.setSelected(true);
-		chbxVoice.setFont(new Font("Calibri", Font.BOLD, 13));
+		chbxMic = new JCheckBox("Mic");
+		chbxMic.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				try {
+					if(chbxMic.isSelected()) {
+						System.out.println("ON");
+						BLL_LANAudioClient.GetInstance().StartRecordingAndSending();
+					}else {
+						System.out.println("OFF");
+						BLL_LANAudioClient.GetInstance().StopRecordingAndSending();
+					}
+				} catch (Exception e2) {
+					System.out.println("Remote screen form EXC: mic BLL_LANAudioClient.GetInstance() null");
+				}
+			}
+		});
+		
+		chbxMic.setFocusable(false);
+		chbxMic.setSelected(true);
+		chbxMic.setFont(new Font("Calibri", Font.BOLD, 13));
+		
+		JCheckBox chbxSpeaker = new JCheckBox("Speaker");
+		chbxSpeaker.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				try {
+					if(chbxSpeaker.isSelected()) {
+						System.out.println("ON");
+						BLL_LANAudioClient.GetInstance().StartReceivingAndSpeaking();
+					}else {
+						System.out.println("OFF");
+						BLL_LANAudioClient.GetInstance().StopReceivingAndSpeaking();
+					}
+				} catch (Exception e2) {
+					System.out.println("Remote screen form EXC: speaker BLL_LANAudioClient.GetInstance() null");
+				}
+			}
+		});
+		chbxSpeaker.setSelected(true);
 		//panel.addMouse
 		//panel.setBackground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addContainerGap(698, Short.MAX_VALUE)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap(594, Short.MAX_VALUE)
 					.addComponent(chbxMouse)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(chbxKeys)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(chbxVoice)
+					.addComponent(chbxMic)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(chbxSpeaker)
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(chbxKeys)
-						.addComponent(chbxVoice)
-						.addComponent(chbxMouse)))
+						.addComponent(chbxMic)
+						.addComponent(chbxMouse)
+						.addComponent(chbxSpeaker)))
 		);
 		
 		panel.setLayout(new GridLayout(colRowNum, colRowNum, 0, 0));
