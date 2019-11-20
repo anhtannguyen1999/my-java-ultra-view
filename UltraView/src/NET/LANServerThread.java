@@ -11,8 +11,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import BLL.BLL_LANAudioClient;
-import BLL.BLL_LANAudioServer;
+import BLL.BLL_LANForm;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import OS.MouseKeyExcuter;
@@ -22,7 +21,7 @@ public class LANServerThread extends Thread {
 	
 	private int port;
 	private String pass;
-	private LANClientInfor clientInfor=null;
+	private LANSocketInfor clientInfor=null;
 	private static ServerSocket ss;
 	private static Socket s;//client socket
 	private static InputStream is;
@@ -33,7 +32,6 @@ public class LANServerThread extends Thread {
 	private static MouseKeyExcuter mouseKeyExcuter;
 	private LANServerMessageReceiver messageReceiver;
 	private boolean runningMessageReceive=false;
-    private BLL_LANAudioServer bll_LANAudioServer;
 	public LANServerThread(int port, String pass) {
 		// TODO Auto-generated constructor stub
 		this.port=port;
@@ -123,7 +121,7 @@ public class LANServerThread extends Thread {
                 
               //Neu check pass dung va chua co client nao ket noi thi gan clientinfor
                 if(message.equals("RequireConnect:"+pass)&&clientInfor==null) {
-                	clientInfor=new LANClientInfor(s.getInetAddress(), s.getPort());
+                	clientInfor=new LANSocketInfor(s.getInetAddress(), s.getPort());
                 	System.out.println("Pass chinh xac, start sending image to"+clientInfor.getIp().toString()+":"+clientInfor.getPort());
                 	
                 	//Khoi tao cac output stream
@@ -138,16 +136,17 @@ public class LANServerThread extends Thread {
     				oos.reset();
                 	//Goi ham gui image va break
                 	try {
-                		//OK KET NOI
-                		bll_LANAudioServer= BLL_LANAudioServer.GetInstance(port+1);
-                		bll_LANAudioServer.SetClientIPAndPort(clientInfor.getIp(), clientInfor.getPort()+1);
-                		bll_LANAudioServer.StartReceivingAndSpeaking();
-                		bll_LANAudioServer.StartRecordingAndSending();
+                		//OK KET NOI Mo Khung chat
+                		BLL_LANForm.GetInstance().OpenChatWindow(port+1);
+                		
+                		
+                		System.out.println("Chuan bi gui hinh");
             			LoopSendImage();
             		} catch (Exception e) {
             			// TODO: handle exception
-            			BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Khong co ket noi!");
-            			BLL_LANAudioServer.RemoveInstance();
+            			BLL_LANForm.GetInstance().AnnounceConnectError("Khong co ket noi!");
+            			//TAT KHUNG CHAT
+            			BLL_LANForm.GetInstance().CloseChatWindow();
             		}
                 }
                 else {
@@ -184,6 +183,7 @@ public class LANServerThread extends Thread {
     	 			os.flush();
     	 			oos.reset();
     	 			java.lang.Runtime.getRuntime().gc();
+    	 			//System.out.println("Send img OK");
     	 		} catch (Exception e) {
     	 			countFaild++;
     	 			if(countFaild>=10) {

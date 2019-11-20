@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import BLL.BLL_LANAudioClient;
+
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
 import DTO.DTO_LANImageInforObject;
@@ -44,7 +44,7 @@ import java.awt.event.ItemEvent;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
-		OpenForm("192.168.57.2", "1999", "ahihi");
+		OpenForm("192.168.1.135", "1999", "ahihi");
 	}
 	//STATIC
 	//Check trang thai form chi mo 1 lan 1 form
@@ -80,7 +80,6 @@ public class RemoteScreenForm extends JFrame {
 	public JPanel panel;
 	public JCheckBox chbxMouse;
 	public JCheckBox chbxKeys;
-	public JCheckBox chbxMic;
 	
 	private int colRowNum=16;
 	public RemoteScreenForm(String ip, String port, String pass) {
@@ -203,45 +202,6 @@ public class RemoteScreenForm extends JFrame {
 		chbxKeys.setFocusable(false);
 		chbxKeys.setSelected(true);
 		chbxKeys.setFont(new Font("Calibri", Font.BOLD, 13));
-		
-		chbxMic = new JCheckBox("Mic");
-		chbxMic.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				try {
-					if(chbxMic.isSelected()) {
-						System.out.println("ON");
-						BLL_LANAudioClient.GetInstance().StartRecordingAndSending();
-					}else {
-						System.out.println("OFF");
-						BLL_LANAudioClient.GetInstance().StopRecordingAndSending();
-					}
-				} catch (Exception e2) {
-					System.out.println("Remote screen form EXC: mic BLL_LANAudioClient.GetInstance() null");
-				}
-			}
-		});
-		
-		chbxMic.setFocusable(false);
-		chbxMic.setSelected(true);
-		chbxMic.setFont(new Font("Calibri", Font.BOLD, 13));
-		
-		JCheckBox chbxSpeaker = new JCheckBox("Speaker");
-		chbxSpeaker.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				try {
-					if(chbxSpeaker.isSelected()) {
-						System.out.println("ON");
-						BLL_LANAudioClient.GetInstance().StartReceivingAndSpeaking();
-					}else {
-						System.out.println("OFF");
-						BLL_LANAudioClient.GetInstance().StopReceivingAndSpeaking();
-					}
-				} catch (Exception e2) {
-					System.out.println("Remote screen form EXC: speaker BLL_LANAudioClient.GetInstance() null");
-				}
-			}
-		});
-		chbxSpeaker.setSelected(true);
 		//panel.addMouse
 		//panel.setBackground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -249,26 +209,20 @@ public class RemoteScreenForm extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(594, Short.MAX_VALUE)
+					.addContainerGap(761, Short.MAX_VALUE)
 					.addComponent(chbxMouse)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(chbxKeys)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(chbxMic)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(chbxSpeaker)
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(chbxKeys)
-						.addComponent(chbxMic)
-						.addComponent(chbxMouse)
-						.addComponent(chbxSpeaker)))
+						.addComponent(chbxMouse)))
 		);
 		
 		panel.setLayout(new GridLayout(colRowNum, colRowNum, 0, 0));

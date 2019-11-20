@@ -3,6 +3,7 @@ package BLL;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+import GUI.ClientChatForm;
 import NET.LANClientThread;
 import NET.LANServerThread;
 
@@ -95,5 +96,21 @@ public class BLL_RemoteScreenForm {
 			LANclient.DestroyClient();
 			LANclient=null;
 		}
+	}
+	
+	public void OpenChatWindow(String serverIP,int serverPort) {
+		// TODO Auto-generated method stub
+		try {
+			ClientChatForm.CreateInstanceClientChatForm(serverIP,serverPort);
+			ClientChatForm clientChatForm = ClientChatForm.GetInstance();
+			clientChatForm.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void CloseChatWindow() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -2,7 +2,7 @@ package NET;
 
 import java.net.InetAddress;
 
-public class LANClientInfor {
+public class LANSocketInfor {
 	private InetAddress ip;
 	private int port;
 	public InetAddress getIp() {
@@ -18,7 +18,7 @@ public class LANClientInfor {
 		this.port = port;
 	}
 	
-	public LANClientInfor(InetAddress ip, int port) {
+	public LANSocketInfor(InetAddress ip, int port) {
 		// TODO Auto-generated constructor stub
 		this.ip=ip;
 		this.port=port;

@@ -9,9 +9,17 @@ import java.util.Enumeration;
 import java.util.Random;
 
 import GUI.RemoteScreenForm;
+import GUI.ServerChatForm;
 import NET.LANServerThread;
 
 public class BLL_LANForm {
+	private static BLL_LANForm instance=null;
+	public static BLL_LANForm GetInstance() {
+		if(instance==null) {
+			instance=new BLL_LANForm();
+		}
+		return instance;
+	}
 	
 	//Ham nay dung de doc port da duoc setting truoc
 	public static String GetMyPort() {
@@ -23,6 +31,16 @@ public class BLL_LANForm {
 	
 	public static String RandromPassword() {
 		return RandomPassword(6);
+	}
+	
+	public static String RandomPassword(int length) {
+		String kq="";
+		Random r = new Random();
+		for(int i=0;i<length;i++) {
+			char c = (char)(r.nextInt(26) + 'a');
+			kq+=c;
+		}
+		return kq;
 	}
 	
 	public void OpenConnect(String ip, String port, String pass) {
@@ -94,14 +112,24 @@ public class BLL_LANForm {
 		else 
 			return "";
 	}
+	
+	public void AnnounceConnectError(String errMess) {
+		System.out.println(errMess);
+	}
 
-	public static String RandomPassword(int length) {
-		String kq="";
-		Random r = new Random();
-		for(int i=0;i<length;i++) {
-			char c = (char)(r.nextInt(26) + 'a');
-			kq+=c;
+	public void OpenChatWindow(int port) {
+		// TODO Auto-generated method stub
+		try {
+			ServerChatForm.CreateInstanceServerChatForm(port);
+			ServerChatForm serverChatForm=ServerChatForm.GetInstance();
+			serverChatForm.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return kq;
+	}
+
+	public void CloseChatWindow() {
+		// TODO Auto-generated method stub
+		
 	}
 }
