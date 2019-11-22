@@ -14,6 +14,7 @@ import java.net.Socket;
 import BLL.BLL_LANForm;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
+import GUI.ServerChatForm;
 import OS.MouseKeyExcuter;
 import OS.ScreenCapturer;
 
@@ -108,6 +109,13 @@ public class LANServerThread extends Thread {
 			}
 			
 			while (clientInfor==null) {
+				//TAT KHUNG CHAT neu co
+				try {
+					if(ServerChatForm.GetInstance()!=null)
+						BLL_LANForm.GetInstance().CloseChatWindow();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
 				//Bat client socket doi ket noi
 				System.out.println("Doi client yeu cau ket noi");
 				s = ss.accept();
@@ -144,7 +152,7 @@ public class LANServerThread extends Thread {
             			LoopSendImage();
             		} catch (Exception e) {
             			// TODO: handle exception
-            			BLL_LANForm.GetInstance().AnnounceConnectError("Khong co ket noi!");
+            			BLL_LANForm.GetInstance().AnnounceConnectError("LANServerThread Khong co ket noi!");
             			//TAT KHUNG CHAT
             			BLL_LANForm.GetInstance().CloseChatWindow();
             		}
@@ -232,5 +240,49 @@ public class LANServerThread extends Thread {
 		lanServerThread.run();
 	}
 	
-	
+	public void CloseServer() {
+		try {
+			runningMessageReceive=false;
+			if(oos!=null)
+				try {
+					oos.reset();
+					oos.close();
+				}catch (Exception e) {}	
+			if(os!=null)
+				try {
+					os.close();
+				}catch (Exception e) {}			
+			if(ois!=null)
+				try {
+					ois.reset();
+					ois.close();
+				}catch (Exception e) {}			
+			if(is!=null)
+				try {
+					is.reset();
+					is.close();
+				}catch (Exception e) {}
+			if(s!=null)
+				try {
+					
+					s.close();
+				}catch (Exception e) {}
+			
+			oos=null;
+			//bout=null;
+			os=null;
+			ois=null;
+			is=null;
+			s=null;
+			
+			ss.close();
+			ss=null;
+			clientInfor=null;
+			arrayLANImageInforObject.Clear();
+			messageReceiver.interrupt();
+			java.lang.Runtime.getRuntime().gc();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
 }

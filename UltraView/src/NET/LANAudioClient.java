@@ -176,5 +176,11 @@ public class LANAudioClient {
 		}
 	}
 
+	public void StopLANAudioClient() {
+		StopRecordAndSend();
+		StopReceiveAndSpeak();
+		datagramSocket.close();
+		datagramSocket=null;
+	}
 }
 

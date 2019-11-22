@@ -191,5 +191,12 @@ public class LANAudioServer
 			}
 		}
 	}
+	
+	public void StopLANAudioServer() {
+		StopRecordAndSend();
+		StopReceiveAndSpeak();
+		datagramSocket.close();
+		datagramSocket=null;
+	}
 }
 

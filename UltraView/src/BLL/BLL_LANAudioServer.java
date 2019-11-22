@@ -38,8 +38,9 @@ public class BLL_LANAudioServer {
 	public static void RemoveInstance() {
 		if(instance!=null) {
 			try {
-				instance.StopRecordingAndSending();
-				instance.StopReceivingAndSpeaking();
+				//instance.StopRecordingAndSending();
+				//instance.StopReceivingAndSpeaking();
+				instance.StopLANAudioServer();
 			}catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -74,6 +75,11 @@ public class BLL_LANAudioServer {
 	public void StopRecordingAndSending() {
 		if(lanAudioServerThread!=null)
 			lanAudioServerThread.StopRecordAndSend();
+	}
+	
+	public void StopLANAudioServer() {
+		if(lanAudioServerThread!=null)
+			lanAudioServerThread.StopLANAudioServer();
 	}
 	
 	public void StartSocketAndInitAudio()

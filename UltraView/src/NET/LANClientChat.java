@@ -86,6 +86,11 @@ public class LANClientChat extends Thread implements LANChat{
 	@Override
 	public void StopChat() {
 		isChatting=false;
+		try {
+			close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 	public int GetClientChatSocketPort() {

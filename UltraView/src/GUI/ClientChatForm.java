@@ -41,11 +41,15 @@ public class ClientChatForm extends ChatForm{
 	public static void CreateInstanceClientChatForm(String IP, int port) {
 		instance=new ClientChatForm(IP, port);
 	}
-	
+	public static void RemoveInstance() {
+		instance.CloseAudioChat();
+		instance=null;
+	}
 	private ClientChatForm(String IP, int port) {
 		super();
 		KhoiTaoEventSend();
 		StartClientChatSoket(IP,port);
+		setTitle("Chat (c)");
 	}
 	
 	@Override
@@ -182,5 +186,12 @@ public class ClientChatForm extends ChatForm{
 		// TODO Auto-generated method stub
 		BLL_LANAudioClient.RemoveInstance();
 		//BLL_RemoteScreenForm.GetInstance().AnnounceConnectError("Mat ket noi!");
+	}
+	public void CloseChat() {
+		// TODO Auto-generated method stub
+		bll_LANClientChat.Stop();
+		setVisible(false);
+		dispose();
+		instance=null;
 	}	
 }

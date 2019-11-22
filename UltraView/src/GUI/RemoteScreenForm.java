@@ -41,6 +41,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
@@ -82,6 +85,7 @@ public class RemoteScreenForm extends JFrame {
 	public JCheckBox chbxKeys;
 	
 	private int colRowNum=16;
+	private JButton btnReOpenChat;
 	public RemoteScreenForm(String ip, String port, String pass) {
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -128,6 +132,7 @@ public class RemoteScreenForm extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				bll_RemoteScreenForm.CloseChatWindow();
 				bll_RemoteScreenForm.DisConnectRemote();
 				isOpened=false;
 			}
@@ -202,6 +207,13 @@ public class RemoteScreenForm extends JFrame {
 		chbxKeys.setFocusable(false);
 		chbxKeys.setSelected(true);
 		chbxKeys.setFont(new Font("Calibri", Font.BOLD, 13));
+		
+		btnReOpenChat = new JButton("ReOpenChat");
+		btnReOpenChat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				bll_RemoteScreenForm.ReOpenChat();
+			}
+		});
 		//panel.addMouse
 		//panel.setBackground(Color.RED);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -209,7 +221,9 @@ public class RemoteScreenForm extends JFrame {
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(761, Short.MAX_VALUE)
+					.addContainerGap(656, Short.MAX_VALUE)
+					.addComponent(btnReOpenChat)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(chbxMouse)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(chbxKeys)
@@ -218,11 +232,12 @@ public class RemoteScreenForm extends JFrame {
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(chbxKeys)
-						.addComponent(chbxMouse)))
+						.addComponent(chbxMouse)
+						.addComponent(btnReOpenChat)))
 		);
 		
 		panel.setLayout(new GridLayout(colRowNum, colRowNum, 0, 0));

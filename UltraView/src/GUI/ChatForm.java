@@ -78,14 +78,19 @@ public abstract class ChatForm extends JFrame {
 	public abstract void OpenAudioChat();
 	public abstract void CloseAudioChat();
 	public ChatForm() {
+		setTitle("Chat");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				OpenAudioChat();
+				System.out.println("Chat form duoc open");
 			}
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				CloseAudioChat();
+				//CloseAudioChat();
+				chbxMic.setSelected(false);
+				chbxSpeaker.setSelected(false);
+				System.out.println("Close audio chat roi!");
 			}
 		});
 		CreateChatFormGUI();

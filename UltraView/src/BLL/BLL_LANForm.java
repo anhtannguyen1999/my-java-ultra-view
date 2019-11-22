@@ -43,17 +43,30 @@ public class BLL_LANForm {
 		return kq;
 	}
 	
+	
+	private boolean isOpenConnection=false;
+	
+	public boolean  GetIsOpenConnection() {
+		return isOpenConnection;
+	}
+	
+	public void SetIsOpenConnection(boolean state) {
+		isOpenConnection=state;
+	}
+	private LANServerThread server;
 	public void OpenConnect(String ip, String port, String pass) {
 		System.out.println("Connect opened at "+ip+":"+port+" pass:"+pass);
 		int iPort;
 		try {
 			iPort= Integer.parseInt(port);
-			if(iPort>=65535||iPort<10)
+			if(iPort>=65530||iPort<10)
 				throw new Exception("Port khong hop le!");
 			
 			//Neu port hop le thi mo server
-			LANServerThread server=new LANServerThread(iPort,pass);
+			//LANServerThread 
+			server=new LANServerThread(iPort,pass);
 			server.start();
+			isOpenConnection=true;
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Port khong hop le!");
@@ -120,6 +133,8 @@ public class BLL_LANForm {
 	public void OpenChatWindow(int port) {
 		// TODO Auto-generated method stub
 		try {
+			
+			System.out.println("Chuan bi create instance server chat form");
 			ServerChatForm.CreateInstanceServerChatForm(port);
 			ServerChatForm serverChatForm=ServerChatForm.GetInstance();
 			serverChatForm.setVisible(true);
@@ -129,7 +144,41 @@ public class BLL_LANForm {
 	}
 
 	public void CloseChatWindow() {
+		System.out.println("Vao close chat window");
 		// TODO Auto-generated method stub
+		try {
+			ServerChatForm.GetInstance().CloseAudioChat();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		try {
+			ServerChatForm.GetInstance().CloseChat();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		System.out.println("Chuan bi tat form chat");
+		ServerChatForm.GetInstance().dispose();
+		
+	}
+
+	public void ReOpenChat() {
+		// TODO Auto-generated method stub
+		ServerChatForm serverChatForm=ServerChatForm.GetInstance();
+		if(serverChatForm!=null)
+			serverChatForm.setVisible(true);
+	}
+
+	public void CloseConnect() {
+		// TODO Auto-generated method stub
+		try {
+			server.interrupt();
+			server.CloseServer();
+			server.stop();
+			isOpenConnection=false;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		
 	}
 }

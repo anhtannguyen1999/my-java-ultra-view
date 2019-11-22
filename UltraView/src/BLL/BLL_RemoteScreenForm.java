@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import GUI.ClientChatForm;
+import GUI.ServerChatForm;
 import NET.LANClientThread;
 import NET.LANServerThread;
 
@@ -96,6 +97,15 @@ public class BLL_RemoteScreenForm {
 			LANclient.DestroyClient();
 			LANclient=null;
 		}
+		//Tat khung chat neu dang hide
+		try {
+			if(!ClientChatForm.GetInstance().isVisible()) {
+				ClientChatForm.RemoveInstance();
+				System.out.println("Xoa instance");
+			}
+		} catch (Exception e) {
+			//Chat form da tat
+		}
 	}
 	
 	public void OpenChatWindow(String serverIP,int serverPort) {
@@ -111,6 +121,23 @@ public class BLL_RemoteScreenForm {
 
 	public void CloseChatWindow() {
 		// TODO Auto-generated method stub
-		
+		try {
+			ClientChatForm.GetInstance().CloseAudioChat();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		try {
+			ClientChatForm.GetInstance().CloseChat();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	public void ReOpenChat() {
+		// TODO Auto-generated method stub
+		ClientChatForm clientChatForm=ClientChatForm.GetInstance();
+		if(clientChatForm!=null)
+			clientChatForm.setVisible(true);
 	}
 }

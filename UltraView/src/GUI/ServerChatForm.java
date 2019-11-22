@@ -36,12 +36,14 @@ public class ServerChatForm extends ChatForm {
 	
 	public static void CreateInstanceServerChatForm(int serverPort) {
 		instance=new ServerChatForm(serverPort);
+		System.out.println("Da CreateInstanceServerChatForm ");
 	}
 	
 	private ServerChatForm(int serverPort) {
 		super();
 		KhoiTaoEventSend();
 		StartServerChatSocket(serverPort);
+		setTitle("Chat (s)");
 	}
 	
 	@Override
@@ -171,5 +173,13 @@ public class ServerChatForm extends ChatForm {
 	public void CloseAudioChat() {
 		// TODO Auto-generated method stub
 		BLL_LANAudioServer.RemoveInstance();
+	}
+
+	public void CloseChat() {
+		// TODO Auto-generated method stub
+		bll_LANServerChat.Stop();
+		setVisible(false);
+		dispose();
+		instance=null;
 	}
 }

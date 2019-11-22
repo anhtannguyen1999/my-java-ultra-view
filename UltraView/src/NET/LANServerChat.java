@@ -41,7 +41,7 @@ public class LANServerChat extends Thread implements LANChat{
 			}
 	        close();
 		} catch (IOException e) {
-			System.out.println("Loi khoi tao server");
+			System.out.println("Loi khoi tao server chat"+e.toString());
 		}
 	}
 	public void SendMessage(String message) {
@@ -72,6 +72,8 @@ public class LANServerChat extends Thread implements LANChat{
 				iStream.close();
 			if(oStream!=null)
 				oStream.close();
+			if(serverSocket!=null)
+				serverSocket.close();
 			System.out.println("Chat dong ket noi");
 		}catch (Exception e) {
 			System.out.println("Loi dong ket noi");
@@ -80,6 +82,10 @@ public class LANServerChat extends Thread implements LANChat{
 	
 	public void StopChat() {
 		isChatting=false;
+		try {
+			close();
+		} catch (IOException e) {
+		}
 	}
 	
 	public LANSocketInfor GetClientChatInfor() {

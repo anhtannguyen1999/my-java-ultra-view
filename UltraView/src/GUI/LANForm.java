@@ -25,9 +25,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import BLL.BLL_LANForm;
+import BLL.BLL_LANServerChat;
+
 import javax.swing.JCheckBox;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LANForm extends JFrame {
 
@@ -41,6 +45,7 @@ public class LANForm extends JFrame {
 	private JTextField txtPartnerPort;
 	private JTextField txtPartnerPassword;
 	private BLL_LANForm bll_LANForm;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -63,10 +68,19 @@ public class LANForm extends JFrame {
 			return;
 		else {
 			isOpened=true;
-			main(args);
+			instance=new LANForm();
+			instance.setVisible(true);
+			//main(args);
 		}
 	}
 	
+	private static LANForm instance=null;
+	public static LANForm GetInstance() {
+		return instance;
+	}
+	public static void RemoveInstance(){
+		instance=null;
+	}
 	
 	/**
 	 * Create the frame.
@@ -78,6 +92,14 @@ public class LANForm extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				isOpened=false;
+				//bll_LANForm.CloseChatWindow();
+				bll_LANForm.CloseConnect();
+				try {
+					bll_LANForm.CloseChatWindow();
+				} catch (Exception e2) {
+					// TODO: handle exception
+				}
+				instance=null;
 			}
 			@Override
 			public void windowOpened(WindowEvent e) {
@@ -218,11 +240,36 @@ public class LANForm extends JFrame {
 		txtYourPassword = new JTextField();
 		txtYourPassword.setColumns(10);
 		
-		JButton btnOpenConnect = new JButton("Open Connect");
+		JButton btnOpenConnect = new JButton("Open Connection");
 		btnOpenConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				bll_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
+				if(bll_LANForm.GetIsOpenConnection()==false) {
+					try {
+						bll_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
+						btnOpenConnect.setBackground(Color.RED);
+						btnOpenConnect.setText("Close Connection");
+					}catch (Exception e) {
+						System.out.println("Mo ket noi that bai!");
+					}
+										
+				}else {
+					try {
+						btnOpenConnect.setBackground(new Color(240,240,240));
+						btnOpenConnect.setText("Open Connection");
+						bll_LANForm.CloseConnect();
+						bll_LANForm.CloseChatWindow();
+					}catch (Exception e) {
+						System.out.println("Server dong ket noi that bai!");
+					}
+				}
+			}
+		});
+		
+		JButton btnOpenchat = new JButton("OpenChat");
+		btnOpenchat.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				bll_LANForm.ReOpenChat();
 			}
 		});
 		GroupLayout gl_pnlOpenCnn = new GroupLayout(pnlOpenCnn);
@@ -238,7 +285,10 @@ public class LANForm extends JFrame {
 						.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 							.addGap(21)
 							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnOpenConnect)
+								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
+									.addComponent(btnOpenchat)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnOpenConnect))
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 									.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
 										.addComponent(lblNewLabel_3)
@@ -272,8 +322,10 @@ public class LANForm extends JFrame {
 						.addComponent(lblNewLabel_4)
 						.addComponent(txtYourPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addComponent(btnOpenConnect)
-					.addContainerGap(71, Short.MAX_VALUE))
+					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnOpenConnect)
+						.addComponent(btnOpenchat))
+					.addContainerGap(32, Short.MAX_VALUE))
 		);
 		pnlOpenCnn.setLayout(gl_pnlOpenCnn);
 		contentPane.setLayout(gl_contentPane);
