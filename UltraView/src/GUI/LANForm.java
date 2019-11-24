@@ -9,6 +9,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Console;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JMenuBar;
@@ -44,6 +48,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import java.awt.SystemColor;
 import java.awt.Window.Type;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 public class LANForm extends JFrame {
 
@@ -57,7 +64,7 @@ public class LANForm extends JFrame {
 	private JTextField txtPartnerPort;
 	private JTextField txtPartnerPassword;
 	private BLL_LANForm bll_LANForm;
-	
+	private JLabel lblStatus;
 	/**
 	 * Launch the application.
 	 */
@@ -65,8 +72,9 @@ public class LANForm extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LANForm frame = new LANForm();
-					frame.setVisible(true);
+					//LANForm frame = new LANForm();
+					//frame.setVisible(true);
+					LANForm.OpenForm(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -135,6 +143,72 @@ public class LANForm extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		mnFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		menuBar.add(mnFile);
+		
+		JMenuItem mntmClose = new JMenuItem("Close");
+		mntmClose.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mntmClose.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				System.out.println("Click close");
+				try {
+					bll_LANForm.CloseConnect();
+				} catch (Exception ex) { }
+				
+				try {
+					bll_LANForm.CloseChatWindow();
+				} catch (Exception ex) { }
+				dispose();
+			}
+		});
+		mnFile.add(mntmClose);
+		
+		JMenu mnSetting = new JMenu("Setting");
+		mnSetting.setBackground(Color.WHITE);
+		mnSetting.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		menuBar.add(mnSetting);
+		
+		JMenu mnLanguage = new JMenu("Language");
+		mnLanguage.setBackground(Color.WHITE);
+		mnLanguage.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mnSetting.add(mnLanguage);
+		
+		JMenuItem mntmEnglish = new JMenuItem("English");
+		mntmEnglish.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				//Tieng anh
+				System.out.println("Tieng Anh");
+			}
+		});
+		mntmEnglish.setBackground(Color.WHITE);
+		mntmEnglish.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mnLanguage.add(mntmEnglish);
+		
+		JMenuItem mntmVietnamese = new JMenuItem("Ti\u1EBFng Vi\u1EC7t");
+		mntmVietnamese.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				System.out.println("Tieng Viet");
+			}
+		});
+		mntmVietnamese.setBackground(Color.WHITE);
+		mntmVietnamese.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mnLanguage.add(mntmVietnamese);
+		
+		JMenu mnHelp = new JMenu("Help");
+		mnHelp.setBackground(Color.WHITE);
+		mnHelp.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmManual = new JMenuItem("Manual");
+		mntmManual.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mntmManual.setBackground(Color.WHITE);
+		mnHelp.add(mntmManual);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		mntmAbout.setBackground(Color.WHITE);
+		mnHelp.add(mntmAbout);
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.inactiveCaption);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -164,11 +238,14 @@ public class LANForm extends JFrame {
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtYourIP = new JTextField();
+		txtYourIP.setToolTipText("Your ip address. Send it to your partner if you want them to remote your computer.");
 		txtYourIP.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourIP.setEditable(false);
 		txtYourIP.setColumns(10);
 		
 		txtYourPort = new JTextField();
+		txtYourPort.setText("1999");
+		txtYourPort.setToolTipText("Your  port. Send it to your partner if you want them to remote your computer.");
 		txtYourPort.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourPort.setColumns(10);
 		
@@ -176,10 +253,13 @@ public class LANForm extends JFrame {
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtYourPassword = new JTextField();
+		txtYourPassword.setToolTipText("Set your password. Send it to your partner if you want them to remote your computer.");
 		txtYourPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourPassword.setColumns(10);
 		
 		JButton btnOpenConnect = new JButton("Allow Connection");
+		btnOpenConnect.setBackground(SystemColor.control);
+		btnOpenConnect.setToolTipText("Allow other computer for connecting and remoting your computer.");
 		btnOpenConnect.setFocusable(false);
 		btnOpenConnect.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnOpenConnect.addMouseListener(new MouseAdapter() {
@@ -190,24 +270,49 @@ public class LANForm extends JFrame {
 						bll_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
 						btnOpenConnect.setBackground(Color.RED);
 						btnOpenConnect.setText("Close Connection");
+						txtYourPort.setEditable(false);
+						txtYourPassword.setEditable(false);
 					}catch (Exception e) {
+						if (e.getMessage().equals("Port khong hop le!")) {
+							ShowMessage("Port is invalid", "Input problem", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+							ShowMessage("Can not open connection at "+txtYourIP.getText()+":"+txtYourPort.getText(), "Open connection failed", JOptionPane.ERROR_MESSAGE);
+						}
 						System.out.println("Mo ket noi that bai!");
+						ShowStatus("Open connection failed!");
 					}
 										
 				}else {
 					try {
 						btnOpenConnect.setBackground(new Color(240,240,240));
 						btnOpenConnect.setText("Open Connection");
+						txtYourPort.setEditable(true);
+						txtYourPassword.setEditable(true);
 						bll_LANForm.CloseConnect();
-						bll_LANForm.CloseChatWindow();
+						ShowStatus("Closed connection!");
+						
 					}catch (Exception e) {
 						System.out.println("Server dong ket noi that bai!");
+					}
+					try {
+						bll_LANForm.CloseChatWindow();
+					} catch (Exception e) {
 					}
 				}
 			}
 		});
 		
-		JButton btnOpenchat = new JButton("OpenChat");
+		JButton btnOpenchat = new JButton("");
+		btnOpenchat.setToolTipText("ReOpen chat.");
+		btnOpenchat.setBorder(null);
+		btnOpenchat.setBackground(new Color(248, 248, 255));
+		try {
+			btnOpenchat.setIcon(new ImageIcon(ImageIO.read(new File("./resource/chatIcon.png"))));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("Can not load icon!");
+		}
 		btnOpenchat.setFocusable(false);
 		btnOpenchat.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnOpenchat.addActionListener(new ActionListener() {
@@ -222,8 +327,8 @@ public class LANForm extends JFrame {
 		lblNewLabel_1.setOpaque(true);
 		GroupLayout gl_pnlOpenCnn = new GroupLayout(pnlOpenCnn);
 		gl_pnlOpenCnn.setHorizontalGroup(
-			gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_pnlOpenCnn.createSequentialGroup()
+			gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 							.addContainerGap()
@@ -239,14 +344,17 @@ public class LANForm extends JFrame {
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 									.addComponent(lblNewLabel_3)
 									.addGap(18)))
-							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
+							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
 								.addComponent(txtYourIP, GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
-									.addComponent(btnOpenchat, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnOpenchat)
+									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(btnOpenConnect))
-								.addComponent(txtYourPassword, 238, 238, 238)
-								.addComponent(txtYourPort, 238, 238, 238))))
+								.addComponent(txtYourPassword, 238, 238, Short.MAX_VALUE)
+								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(txtYourPort, GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)))))
 					.addGap(28))
 		);
 		gl_pnlOpenCnn.setVerticalGroup(
@@ -260,8 +368,8 @@ public class LANForm extends JFrame {
 						.addComponent(lblNewLabel_2))
 					.addGap(18)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
-						.addComponent(txtYourPort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_3))
+						.addComponent(lblNewLabel_3)
+						.addComponent(txtYourPort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(13)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblNewLabel_4)
@@ -269,7 +377,7 @@ public class LANForm extends JFrame {
 					.addGap(18)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnOpenConnect)
-						.addComponent(btnOpenchat))
+						.addComponent(btnOpenchat, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		pnlOpenCnn.setLayout(gl_pnlOpenCnn);
@@ -293,6 +401,7 @@ public class LANForm extends JFrame {
 		lblNewLabel_9.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtPartnerIP = new JTextField();
+		txtPartnerIP.setToolTipText("Enter your partner's ip address. Ex: 192.168.1.135");
 		txtPartnerIP.setBounds(118, 81, 216, 26);
 		txtPartnerIP.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerIP.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -300,6 +409,8 @@ public class LANForm extends JFrame {
 		txtPartnerIP.setColumns(10);
 		
 		txtPartnerPort = new JTextField();
+		txtPartnerPort.setText("1999");
+		txtPartnerPort.setToolTipText("Enter your partner's port. Port is an number only. Ex: 1999");
 		txtPartnerPort.setBounds(118, 121, 216, 26);
 		txtPartnerPort.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerPort.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -307,6 +418,7 @@ public class LANForm extends JFrame {
 		txtPartnerPort.setColumns(10);
 		
 		txtPartnerPassword = new JTextField();
+		txtPartnerPassword.setToolTipText("Enter your partner's password.");
 		txtPartnerPassword.setBounds(119, 161, 216, 26);
 		txtPartnerPassword.setAlignmentY(Component.TOP_ALIGNMENT);
 		txtPartnerPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -314,6 +426,8 @@ public class LANForm extends JFrame {
 		txtPartnerPassword.setColumns(10);
 		
 		JButton btnConnect = new JButton("Start Remote");
+		btnConnect.setBackground(SystemColor.control);
+		btnConnect.setToolTipText("Start remote other computer.");
 		btnConnect.setBounds(192, 200, 142, 29);
 		btnConnect.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		btnConnect.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -386,7 +500,7 @@ public class LANForm extends JFrame {
 		pnlRemoteForm.add(btnConnect);
 		panel.setLayout(gl_panel);
 		
-		JLabel lblStatus = new JLabel("Status: ...");
+		lblStatus = new JLabel("Status: ...");
 		lblStatus.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		GroupLayout gl_statusPanel = new GroupLayout(statusPanel);
 		gl_statusPanel.setHorizontalGroup(
@@ -407,4 +521,18 @@ public class LANForm extends JFrame {
 		contentPane.add(panel);
 		contentPane.add(statusPanel);
 	}
+	
+	
+	public void ShowStatus(String status) {
+		lblStatus.setText("Status: "+status);
+	}
+	
+	public void ShowMessage(String message, String tile,int type) {
+		JOptionPane.showMessageDialog(instance, message, tile, type);
+	}
+	
+	public void LoadLanguage() {
+		
+	}
+	
 }

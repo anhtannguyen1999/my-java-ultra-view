@@ -50,6 +50,7 @@ public class ClientChatForm extends ChatForm{
 		KhoiTaoEventSend();
 		StartClientChatSoket(IP,port);
 		setTitle("Chat (c)");
+		SetLblPartnerIP(IP);
 	}
 	
 	@Override

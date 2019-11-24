@@ -103,12 +103,13 @@ public class LANClientThread extends Thread{
 		}
 		isReceivingImage=true;
 		
-		System.out.println("Da gui yeu cau ket noi den: "+serverIP+":"+serverPort+" pass: "+pass);
-		
-		
+
+		RemoteScreenForm.GetInstance().ShowStatus("Request has been sent to server at "+serverIP+":"+serverPort+" pass: "+pass);
+		System.out.println("Da gui yeu cau ket noi den: "+serverIP+":"+serverPort+" pass: "+pass);		
 	}
 	
 	public void DestroyClient() {
+		RemoteScreenForm.GetInstance().ShowStatus("Disconnected!");
 		System.out.println("Destroy client!");
 		isReceivingImage=false;
 		xacThucThanhCong=false;
@@ -139,6 +140,7 @@ public class LANClientThread extends Thread{
 				//System.out.println("Nhan hinh roi nhe!");
 			} catch (InterruptedException e) {
 				System.out.println("Loi nhan hinh in LoopReceiveImage");
+				RemoteScreenForm.GetInstance().ShowStatus("Receive image failed!");
 			}
 			
 		}
@@ -158,6 +160,7 @@ public class LANClientThread extends Thread{
 		} catch (Exception e) { //Co gang tao client neu ket noi fail
 			System.out.println("Receive Image Failed!");
 			System.out.println(e.toString());
+			RemoteScreenForm.GetInstance().ShowStatus("Receive image failed!");
 			try {
 				//StartClient();
 				
@@ -222,6 +225,7 @@ public class LANClientThread extends Thread{
 				} catch (Exception e) {
 					// TODO: handle exception
 					System.out.println("Loi xac thuc connect");
+					RemoteScreenForm.GetInstance().ShowStatus("Validation error!");
 				}
 			}
 			java.lang.Runtime.getRuntime().gc();
@@ -240,6 +244,7 @@ public class LANClientThread extends Thread{
 							if(message.equals("XacThucThanhCong")) {
 								isXacThuc=true;
 								xacThucThanhCong=true;
+								RemoteScreenForm.GetInstance().ShowStatus("Connect successfully!");
 								return;
 							}
 						} catch (Exception e) {

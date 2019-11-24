@@ -10,7 +10,8 @@ import javax.swing.border.EmptyBorder;
 import BLL.BLL_LANClientChat;
 import BLL.BLL_LANServerChat;
 
-import javax.annotation.Resource;
+//import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
@@ -28,6 +29,8 @@ import javax.swing.JSlider;
 import javax.swing.JButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.awt.event.ActionListener;
@@ -43,6 +46,8 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.SystemColor;
+import javax.swing.JLabel;
 
 public abstract class ChatForm extends JFrame {
 
@@ -53,6 +58,7 @@ public abstract class ChatForm extends JFrame {
 	protected String chatData="";
 	protected JCheckBox chbxSpeaker;
 	protected JCheckBox chbxMic;
+	private JLabel lblPartnerIp;
 	public void AddMessage(String message) {
 		chatData+=message+"\n";
 		txtChatBox.setText(chatData);
@@ -122,27 +128,42 @@ public abstract class ChatForm extends JFrame {
 		txtText.setLineWrap(true);
 		scrollPane_1.setViewportView(txtText);
 		
-		btnSend = new JButton("Send");
+		btnSend = new JButton("");
+		btnSend.setBackground(SystemColor.control);
+		try {
+			btnSend.setIcon(new ImageIcon(ImageIO.read(new File(".\\resource\\sendIcon.png"))));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Can not load icon!");
+		}
 		btnSend.setFocusable(false);
+		
+		lblPartnerIp = new JLabel("Partner IP");
+		lblPartnerIp.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
-						.addComponent(panel, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(scrollPane_1)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(btnSend)))
+							.addComponent(btnSend))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addComponent(lblPartnerIp)
+							.addPreferredGap(ComponentPlacement.RELATED, 259, Short.MAX_VALUE)
+							.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(lblPartnerIp)
+						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 383, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
@@ -184,5 +205,9 @@ public abstract class ChatForm extends JFrame {
 		txtChatBox.setWrapStyleWord(true);
 		txtChatBox.setText(chatData);
 		contentPane.setLayout(gl_contentPane);
+	}
+	
+	public void SetLblPartnerIP(String ip) {
+		lblPartnerIp.setText("Partner: "+ip);
 	}
 }

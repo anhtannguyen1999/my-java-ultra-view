@@ -3,7 +3,10 @@ package BLL;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
+import javax.swing.JOptionPane;
+
 import GUI.ClientChatForm;
+import GUI.RemoteScreenForm;
 import GUI.ServerChatForm;
 import NET.LANClientThread;
 import NET.LANServerThread;
@@ -17,21 +20,23 @@ public class BLL_RemoteScreenForm {
 		return instance;
 	}
 	LANClientThread LANclient=null;
-	public void ConnectRemoteTo(String ip,String port,String pass) {
+	public void ConnectRemoteTo(String ip,String port,String pass) throws Exception{
 		int iPort;
 		try {
 			iPort= Integer.parseInt(port);
-			if(iPort>=65535||iPort<10)
-				throw new Exception("Port khong hop le!");
-			//Neu port hop le thi open client
-			LANclient=new LANClientThread(ip,iPort,pass);
-			LANclient.start();
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("Port khong hop le!");
-			return;
+			RemoteScreenForm.GetInstance().ShowMessage("Port is invalid", "Input problem", JOptionPane.ERROR_MESSAGE);
+			throw new Exception("Port khong hop le!");
 		}
-				
+		
+		if(iPort>=65535||iPort<10) {
+			RemoteScreenForm.GetInstance().ShowMessage("Port is invalid", "Input problem", JOptionPane.ERROR_MESSAGE);
+			throw new Exception("Port khong hop le!");
+		}
+			
+		//Neu port hop le thi open client
+		LANclient=new LANClientThread(ip,iPort,pass);
+		LANclient.start();
 	}
 	
 	public void SendClick(MouseEvent e, boolean type) {
@@ -139,5 +144,9 @@ public class BLL_RemoteScreenForm {
 		ClientChatForm clientChatForm=ClientChatForm.GetInstance();
 		if(clientChatForm!=null)
 			clientChatForm.setVisible(true);
+	}
+	
+	public void ShowStatus(String status) {
+		RemoteScreenForm.GetInstance().ShowStatus(status);
 	}
 }

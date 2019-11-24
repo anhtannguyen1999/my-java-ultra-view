@@ -14,6 +14,7 @@ import java.net.Socket;
 import BLL.BLL_LANForm;
 import BLL.BLL_RemoteScreenForm;
 import DTO.DTO_ArrayLANImageInforObject;
+import GUI.LANForm;
 import GUI.ServerChatForm;
 import OS.MouseKeyExcuter;
 import OS.ScreenCapturer;
@@ -96,6 +97,7 @@ public class LANServerThread extends Thread {
 			StartServer();
 		} catch (Exception e) {
 			System.out.println("Reset server faild");
+			LANForm.GetInstance().ShowStatus("Reset server failed!");
 			e.printStackTrace();
 		}
 	}
@@ -118,8 +120,10 @@ public class LANServerThread extends Thread {
 				}
 				//Bat client socket doi ket noi
 				System.out.println("Doi client yeu cau ket noi");
+				LANForm.GetInstance().ShowStatus("Waiting client for connecting..");
 				s = ss.accept();
 				System.out.println("Co client ket noi");
+				LANForm.GetInstance().ShowStatus("A client is trying to connect..");
 				is = s.getInputStream();
 				ois = new ObjectInputStream(is);
 								
@@ -131,6 +135,7 @@ public class LANServerThread extends Thread {
                 if(message.equals("RequireConnect:"+pass)&&clientInfor==null) {
                 	clientInfor=new LANSocketInfor(s.getInetAddress(), s.getPort());
                 	System.out.println("Pass chinh xac, start sending image to"+clientInfor.getIp().toString()+":"+clientInfor.getPort());
+                	LANForm.GetInstance().ShowStatus("Checked successfully!");
                 	
                 	//Khoi tao cac output stream
                 	os = s.getOutputStream();
@@ -147,12 +152,13 @@ public class LANServerThread extends Thread {
                 		//OK KET NOI Mo Khung chat
                 		BLL_LANForm.GetInstance().OpenChatWindow(port+1);
                 		
-                		
+                		LANForm.GetInstance().ShowStatus("Checked successfully, start sending image to "+clientInfor.getIp().toString()+":"+clientInfor.getPort());
                 		System.out.println("Chuan bi gui hinh");
             			LoopSendImage();
             		} catch (Exception e) {
             			// TODO: handle exception
             			BLL_LANForm.GetInstance().AnnounceConnectError("LANServerThread Khong co ket noi!");
+            			LANForm.GetInstance().ShowStatus("There is no connection!");
             			//TAT KHUNG CHAT
             			BLL_LANForm.GetInstance().CloseChatWindow();
             		}
@@ -166,6 +172,8 @@ public class LANServerThread extends Thread {
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.out.println("Loi roi: "+e.toString());
+			LANForm.GetInstance().ShowStatus("Start server failed");
+
 		}
 	}
 
@@ -196,6 +204,7 @@ public class LANServerThread extends Thread {
     	 			countFaild++;
     	 			if(countFaild>=10) {
         	 			System.out.println("Send obj to client failed!-Reset Server");
+        	 			LANForm.GetInstance().ShowStatus("Send information to client failed!-Reset Server");
         	 			break;
     	 			}
     	 		}

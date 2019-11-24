@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
+import GUI.LANForm;
 import GUI.RemoteScreenForm;
 import GUI.ServerChatForm;
 import NET.LANServerThread;
@@ -54,25 +57,25 @@ public class BLL_LANForm {
 		isOpenConnection=state;
 	}
 	private LANServerThread server;
-	public void OpenConnect(String ip, String port, String pass) {
+	public void OpenConnect(String ip, String port, String pass) throws Exception {
 		System.out.println("Connect opened at "+ip+":"+port+" pass:"+pass);
-		int iPort;
+
+		int iPort=0;
 		try {
 			iPort= Integer.parseInt(port);
-			if(iPort>=65530||iPort<10)
-				throw new Exception("Port khong hop le!");
-			
-			//Neu port hop le thi mo server
-			//LANServerThread 
-			server=new LANServerThread(iPort,pass);
-			server.start();
-			isOpenConnection=true;
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("Port khong hop le!");
-			return;
+			throw new Exception("Port khong hop le!");
 		}
 		
+		if(iPort>=65530||iPort<10) {
+			throw new Exception("Port khong hop le!");
+		}
+		
+		//Neu port hop le thi mo server
+		//LANServerThread 
+		server=new LANServerThread(iPort,pass);
+		server.start();
+		isOpenConnection=true;		
 	}
 	
 	public void ConnectAndShowRemoteForm(String ip,String port, String pass) {

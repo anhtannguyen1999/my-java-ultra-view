@@ -26,6 +26,7 @@ public class LANServerChat extends Thread implements LANChat{
 			myServerChatForm=ServerChatForm.GetInstance();
 			serverSocket = new ServerSocket(serverPort);
 			socket=serverSocket.accept();
+			myServerChatForm.SetLblPartnerIP(socket.getInetAddress().toString());
 			open();
 			isChatting = true;
 			while (isChatting) {
