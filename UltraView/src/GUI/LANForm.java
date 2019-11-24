@@ -11,6 +11,8 @@ import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -65,6 +67,32 @@ public class LANForm extends JFrame {
 	private JTextField txtPartnerPassword;
 	private BLL_LANForm bll_LANForm;
 	private JLabel lblStatus;
+	private JLabel lblAllowConnection;
+	private JLabel lblRemoteAnother;
+	private JLabel lblInfoAllowConnection;
+	private JLabel lblInfoRemoteAnother;
+	private JLabel lblYourIP;
+	private JLabel lblYourPort;
+	private JLabel lblYourPassword;
+	private JButton btnOpenConnect;
+	private JLabel lblPartnerIP;
+	private JLabel lblPartnerPort;
+	private JLabel lblPartnerPassword;
+	private JButton btnConnect;
+	private JMenu mnFile;
+	private JMenuItem mntmClose;
+	private JMenu mnSetting;
+	private JMenu mnLanguage;
+	private JMenuItem mntmEnglish;
+	private JMenuItem mntmVietnamese;
+	private JMenu mnHelp;
+	private JMenuItem mntmManual;
+	private JMenuItem mntmAbout;
+	private JButton btnOpenchat;
+	
+	private String msgPortInvalid="";
+	private String msgOpenConnectFailed="";
+	
 	/**
 	 * Launch the application.
 	 */
@@ -75,6 +103,7 @@ public class LANForm extends JFrame {
 					//LANForm frame = new LANForm();
 					//frame.setVisible(true);
 					LANForm.OpenForm(null);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -130,6 +159,8 @@ public class LANForm extends JFrame {
 				txtYourIP.setText(BLL_LANForm.GetMyIPv4());
 				txtYourPort.setText(BLL_LANForm.GetMyPort());
 				txtYourPassword.setText(BLL_LANForm.RandromPassword());
+				
+				SetLanguage(1);
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -140,11 +171,11 @@ public class LANForm extends JFrame {
 		menuBar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		setJMenuBar(menuBar);
 		
-		JMenu mnFile = new JMenu("File");
+		mnFile = new JMenu("File");
 		mnFile.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmClose = new JMenuItem("Close");
+		mntmClose = new JMenuItem("Close");
 		mntmClose.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mntmClose.addMouseListener(new MouseAdapter() {
 			@Override
@@ -162,50 +193,54 @@ public class LANForm extends JFrame {
 		});
 		mnFile.add(mntmClose);
 		
-		JMenu mnSetting = new JMenu("Setting");
+		
+		mnSetting = new JMenu("Setting");
 		mnSetting.setBackground(Color.WHITE);
 		mnSetting.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		menuBar.add(mnSetting);
 		
-		JMenu mnLanguage = new JMenu("Language");
+		mnLanguage = new JMenu("Language");
 		mnLanguage.setBackground(Color.WHITE);
 		mnLanguage.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mnSetting.add(mnLanguage);
 		
-		JMenuItem mntmEnglish = new JMenuItem("English");
+		mntmEnglish = new JMenuItem("English");
 		mntmEnglish.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				//Tieng anh
 				System.out.println("Tieng Anh");
+				SetLanguage(0);
 			}
 		});
 		mntmEnglish.setBackground(Color.WHITE);
 		mntmEnglish.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mnLanguage.add(mntmEnglish);
 		
-		JMenuItem mntmVietnamese = new JMenuItem("Ti\u1EBFng Vi\u1EC7t");
+		mntmVietnamese = new JMenuItem("Ti\u1EBFng Vi\u1EC7t");
 		mntmVietnamese.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				System.out.println("Tieng Viet");
+				SetLanguage(1);
 			}
 		});
 		mntmVietnamese.setBackground(Color.WHITE);
 		mntmVietnamese.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mnLanguage.add(mntmVietnamese);
 		
-		JMenu mnHelp = new JMenu("Help");
+				
+		mnHelp = new JMenu("Help");
 		mnHelp.setBackground(Color.WHITE);
 		mnHelp.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		menuBar.add(mnHelp);
 		
-		JMenuItem mntmManual = new JMenuItem("Manual");
+		mntmManual = new JMenuItem("Manual");
 		mntmManual.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mntmManual.setBackground(Color.WHITE);
 		mnHelp.add(mntmManual);
 		
-		JMenuItem mntmAbout = new JMenuItem("About");
+		mntmAbout = new JMenuItem("About");
 		mntmAbout.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mntmAbout.setBackground(Color.WHITE);
 		mnHelp.add(mntmAbout);
@@ -216,7 +251,7 @@ public class LANForm extends JFrame {
 		
 		JPanel statusPanel = new JPanel();
 		statusPanel.setBackground(SystemColor.inactiveCaption);
-		statusPanel.setBounds(5, 335, 813, 20);
+		statusPanel.setBounds(5, 335, 789, 20);
 		statusPanel.setFocusable(false);
 		statusPanel.setAlignmentY(0.0f);
 		statusPanel.setAlignmentX(0.0f);
@@ -230,36 +265,33 @@ public class LANForm extends JFrame {
 		pnlOpenCnn.setBackground(new Color(248, 248, 255));
 		pnlOpenCnn.setBorder(new MatteBorder(0, 0, 0, 0, (Color) new Color(0, 0, 0)));
 		
-		JLabel lblNewLabel_2 = new JLabel("Your IP");
-		lblNewLabel_2.setAlignmentY(Component.TOP_ALIGNMENT);
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblYourIP = new JLabel("Your IP");
+		lblYourIP.setAlignmentY(Component.TOP_ALIGNMENT);
+		lblYourIP.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
-		JLabel lblNewLabel_3 = new JLabel("Your Port");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblYourPort = new JLabel("Your Port");
+		lblYourPort.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtYourIP = new JTextField();
-		txtYourIP.setToolTipText("Your ip address. Send it to your partner if you want them to remote your computer.");
+		
 		txtYourIP.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourIP.setEditable(false);
 		txtYourIP.setColumns(10);
 		
 		txtYourPort = new JTextField();
 		txtYourPort.setText("1999");
-		txtYourPort.setToolTipText("Your  port. Send it to your partner if you want them to remote your computer.");
 		txtYourPort.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourPort.setColumns(10);
 		
-		JLabel lblNewLabel_4 = new JLabel("Password");
-		lblNewLabel_4.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblYourPassword = new JLabel("Password");
+		lblYourPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtYourPassword = new JTextField();
-		txtYourPassword.setToolTipText("Set your password. Send it to your partner if you want them to remote your computer.");
 		txtYourPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtYourPassword.setColumns(10);
 		
-		JButton btnOpenConnect = new JButton("Allow Connection");
+		btnOpenConnect = new JButton("Allow Connection");
 		btnOpenConnect.setBackground(SystemColor.control);
-		btnOpenConnect.setToolTipText("Allow other computer for connecting and remoting your computer.");
 		btnOpenConnect.setFocusable(false);
 		btnOpenConnect.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnOpenConnect.addMouseListener(new MouseAdapter() {
@@ -269,28 +301,28 @@ public class LANForm extends JFrame {
 					try {
 						bll_LANForm.OpenConnect(txtYourIP.getText(),txtYourPort.getText(),txtYourPassword.getText());
 						btnOpenConnect.setBackground(Color.RED);
-						btnOpenConnect.setText("Close Connection");
+						btnOpenConnect.setText(GetLanguageString("lblCloseConnection"));
 						txtYourPort.setEditable(false);
 						txtYourPassword.setEditable(false);
 					}catch (Exception e) {
 						if (e.getMessage().equals("Port khong hop le!")) {
-							ShowMessage("Port is invalid", "Input problem", JOptionPane.ERROR_MESSAGE);
+							ShowMessage(msgPortInvalid, "Port problem", JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							ShowMessage("Can not open connection at "+txtYourIP.getText()+":"+txtYourPort.getText(), "Open connection failed", JOptionPane.ERROR_MESSAGE);
+							ShowMessage(msgOpenConnectFailed+txtYourIP.getText()+":"+txtYourPort.getText(), "Open connection failed", JOptionPane.ERROR_MESSAGE);
 						}
 						System.out.println("Mo ket noi that bai!");
-						ShowStatus("Open connection failed!");
+						ShowStatus(GetLanguageString("sttOpenConnectFailed"));
 					}
 										
 				}else {
 					try {
 						btnOpenConnect.setBackground(new Color(240,240,240));
-						btnOpenConnect.setText("Open Connection");
+						btnOpenConnect.setText(GetLanguageString("lblAllowConnection"));
 						txtYourPort.setEditable(true);
 						txtYourPassword.setEditable(true);
 						bll_LANForm.CloseConnect();
-						ShowStatus("Closed connection!");
+						ShowStatus(GetLanguageString("sttCloseConnection"));
 						
 					}catch (Exception e) {
 						System.out.println("Server dong ket noi that bai!");
@@ -303,8 +335,7 @@ public class LANForm extends JFrame {
 			}
 		});
 		
-		JButton btnOpenchat = new JButton("");
-		btnOpenchat.setToolTipText("ReOpen chat.");
+		btnOpenchat = new JButton("");
 		btnOpenchat.setBorder(null);
 		btnOpenchat.setBackground(new Color(248, 248, 255));
 		try {
@@ -321,10 +352,10 @@ public class LANForm extends JFrame {
 			}
 		});
 		
-		JLabel lblNewLabel_1 = new JLabel("<html>Please click \"Allow Connection\" and send your IP, port, password to your partner if you want they to remote your computer.</html>");
-		lblNewLabel_1.setBackground(new Color(248, 248, 255));
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.ITALIC, 16));
-		lblNewLabel_1.setOpaque(true);
+		lblInfoAllowConnection = new JLabel("<html>Please click \"Allow Connection\" and send your IP, port, password to your partner if you want they to remote your computer.</html>");
+		lblInfoAllowConnection.setBackground(new Color(248, 248, 255));
+		lblInfoAllowConnection.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		lblInfoAllowConnection.setOpaque(true);
 		GroupLayout gl_pnlOpenCnn = new GroupLayout(pnlOpenCnn);
 		gl_pnlOpenCnn.setHorizontalGroup(
 			gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
@@ -332,24 +363,24 @@ public class LANForm extends JFrame {
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 337, GroupLayout.PREFERRED_SIZE))
+							.addComponent(lblInfoAllowConnection, GroupLayout.PREFERRED_SIZE, 337, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 							.addGap(31)
 							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 									.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblNewLabel_4)
-										.addComponent(lblNewLabel_2))
+										.addComponent(lblYourPassword)
+										.addComponent(lblYourIP))
 									.addGap(19))
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
-									.addComponent(lblNewLabel_3)
+									.addComponent(lblYourPort)
 									.addGap(18)))
 							.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
 								.addComponent(txtYourIP, GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
+								.addGroup(Alignment.TRAILING, gl_pnlOpenCnn.createSequentialGroup()
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnOpenchat)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addComponent(btnOpenchat, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnOpenConnect))
 								.addComponent(txtYourPassword, 238, 238, Short.MAX_VALUE)
 								.addGroup(gl_pnlOpenCnn.createSequentialGroup()
@@ -361,24 +392,24 @@ public class LANForm extends JFrame {
 			gl_pnlOpenCnn.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_pnlOpenCnn.createSequentialGroup()
 					.addGap(5)
-					.addComponent(lblNewLabel_1)
+					.addComponent(lblInfoAllowConnection)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
 						.addComponent(txtYourIP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_2))
+						.addComponent(lblYourIP))
 					.addGap(18)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblNewLabel_3)
+						.addComponent(lblYourPort)
 						.addComponent(txtYourPort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(13)
 					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_4)
+						.addComponent(lblYourPassword)
 						.addComponent(txtYourPassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.BASELINE)
+					.addGroup(gl_pnlOpenCnn.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnOpenConnect)
 						.addComponent(btnOpenchat, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
+					.addGap(17))
 		);
 		pnlOpenCnn.setLayout(gl_pnlOpenCnn);
 		
@@ -386,22 +417,21 @@ public class LANForm extends JFrame {
 		pnlRemoteForm.setBackground(new Color(248, 248, 255));
 		pnlRemoteForm.setBorder(new MatteBorder(0, 1, 0, 0, (Color) new Color(0, 0, 0)));
 		
-		JLabel lblNewLabel_7 = new JLabel("Partner IP");
-		lblNewLabel_7.setBounds(13, 84, 71, 20);
-		lblNewLabel_7.setAlignmentY(Component.TOP_ALIGNMENT);
-		lblNewLabel_7.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblPartnerIP = new JLabel("Partner IP");
+		lblPartnerIP.setBounds(13, 84, 71, 20);
+		lblPartnerIP.setAlignmentY(Component.TOP_ALIGNMENT);
+		lblPartnerIP.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
-		JLabel lblNewLabel_8 = new JLabel("Partner Port");
-		lblNewLabel_8.setBounds(13, 124, 85, 20);
-		lblNewLabel_8.setAlignmentY(Component.TOP_ALIGNMENT);
-		lblNewLabel_8.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblPartnerPort = new JLabel("Partner Port");
+		lblPartnerPort.setBounds(13, 124, 85, 20);
+		lblPartnerPort.setAlignmentY(Component.TOP_ALIGNMENT);
+		lblPartnerPort.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
-		JLabel lblNewLabel_9 = new JLabel("Password");
-		lblNewLabel_9.setBounds(13, 164, 67, 20);
-		lblNewLabel_9.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblPartnerPassword = new JLabel("Password");
+		lblPartnerPassword.setBounds(13, 164, 67, 20);
+		lblPartnerPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtPartnerIP = new JTextField();
-		txtPartnerIP.setToolTipText("Enter your partner's ip address. Ex: 192.168.1.135");
 		txtPartnerIP.setBounds(118, 81, 216, 26);
 		txtPartnerIP.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerIP.setAlignmentY(Component.TOP_ALIGNMENT);
@@ -410,7 +440,6 @@ public class LANForm extends JFrame {
 		
 		txtPartnerPort = new JTextField();
 		txtPartnerPort.setText("1999");
-		txtPartnerPort.setToolTipText("Enter your partner's port. Port is an number only. Ex: 1999");
 		txtPartnerPort.setBounds(118, 121, 216, 26);
 		txtPartnerPort.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerPort.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -418,17 +447,15 @@ public class LANForm extends JFrame {
 		txtPartnerPort.setColumns(10);
 		
 		txtPartnerPassword = new JTextField();
-		txtPartnerPassword.setToolTipText("Enter your partner's password.");
 		txtPartnerPassword.setBounds(119, 161, 216, 26);
 		txtPartnerPassword.setAlignmentY(Component.TOP_ALIGNMENT);
 		txtPartnerPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtPartnerPassword.setColumns(10);
 		
-		JButton btnConnect = new JButton("Start Remote");
+		btnConnect = new JButton("Start Remote");
 		btnConnect.setBackground(SystemColor.control);
-		btnConnect.setToolTipText("Start remote other computer.");
-		btnConnect.setBounds(192, 200, 142, 29);
+		btnConnect.setBounds(168, 200, 166, 29);
 		btnConnect.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		btnConnect.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnConnect.setFocusable(false);
@@ -440,28 +467,28 @@ public class LANForm extends JFrame {
 			}
 		});
 		
-		JLabel lblNewLabel_6 = new JLabel("<html>Please enter IP, port, password of the computer that you want to remote.</html>");
-		lblNewLabel_6.setBackground(new Color(248, 248, 255));
-		lblNewLabel_6.setBounds(43, 13, 284, 40);
-		lblNewLabel_6.setFont(new Font("Tahoma", Font.ITALIC, 16));
-		lblNewLabel_6.setVerticalTextPosition(SwingConstants.TOP);
-		lblNewLabel_6.setOpaque(true);
+		lblInfoRemoteAnother = new JLabel("<html>Please enter IP, port, password of the computer that you want to remote.</html>");
+		lblInfoRemoteAnother.setBackground(new Color(248, 248, 255));
+		lblInfoRemoteAnother.setBounds(43, 13, 284, 40);
+		lblInfoRemoteAnother.setFont(new Font("Tahoma", Font.ITALIC, 16));
+		lblInfoRemoteAnother.setVerticalTextPosition(SwingConstants.TOP);
+		lblInfoRemoteAnother.setOpaque(true);
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(SystemColor.inactiveCaption);
 		panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		
-		JLabel lblNewLabel = new JLabel("Allow Connection");
-		panel_1.add(lblNewLabel);
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblAllowConnection = new JLabel("Allow Connection");
+		panel_1.add(lblAllowConnection);
+		lblAllowConnection.setFont(new Font("Tahoma", Font.BOLD, 20));
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(SystemColor.inactiveCaption);
 		panel_2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		
-		JLabel lblNewLabel_5 = new JLabel("Remote Another");
-		panel_2.add(lblNewLabel_5);
-		lblNewLabel_5.setFont(new Font("Tahoma", Font.BOLD, 20));
+		lblRemoteAnother = new JLabel("Remote Another");
+		panel_2.add(lblRemoteAnother);
+		lblRemoteAnother.setFont(new Font("Tahoma", Font.BOLD, 20));
 		GroupLayout gl_panel = new GroupLayout(panel);
 		gl_panel.setHorizontalGroup(
 			gl_panel.createParallelGroup(Alignment.TRAILING)
@@ -490,10 +517,10 @@ public class LANForm extends JFrame {
 					.addContainerGap())
 		);
 		pnlRemoteForm.setLayout(null);
-		pnlRemoteForm.add(lblNewLabel_6);
-		pnlRemoteForm.add(lblNewLabel_9);
-		pnlRemoteForm.add(lblNewLabel_7);
-		pnlRemoteForm.add(lblNewLabel_8);
+		pnlRemoteForm.add(lblInfoRemoteAnother);
+		pnlRemoteForm.add(lblPartnerPassword);
+		pnlRemoteForm.add(lblPartnerIP);
+		pnlRemoteForm.add(lblPartnerPort);
 		pnlRemoteForm.add(txtPartnerIP);
 		pnlRemoteForm.add(txtPartnerPort);
 		pnlRemoteForm.add(txtPartnerPassword);
@@ -531,8 +558,58 @@ public class LANForm extends JFrame {
 		JOptionPane.showMessageDialog(instance, message, tile, type);
 	}
 	
-	public void LoadLanguage() {
-		
+	
+	private ResourceBundle lg=null;
+	
+	public String GetLanguageString(String key) {
+		return lg.getString(key);
 	}
 	
+	public void SetLanguage(int language) {
+		Locale locale=null;
+		switch (language) {
+		case 0://en
+			locale = new Locale("en");
+			break;
+		case 1://vi
+			locale = new Locale("vi");
+			break;
+		default:
+			locale = new Locale("en");
+			break;
+		}
+		lg = ResourceBundle.getBundle("internationalization.message.language", locale);
+		lblAllowConnection.setText(lg.getString("lblAllowConnection"));
+		lblRemoteAnother.setText(lg.getString("lblRemoteAnother"));
+		lblInfoAllowConnection.setText(lg.getString("lblInfoAllowConnection"));
+		lblInfoRemoteAnother.setText(lg.getString("lblInfoRemoteAnother"));
+		lblYourIP.setText(lg.getString("lblYourIP"));
+		lblYourPort.setText(lg.getString("lblYourPort"));
+		lblYourPassword.setText(lg.getString("lblYourPassword"));
+		btnOpenConnect.setText(lg.getString("btnOpenConnect"));
+		lblPartnerIP.setText(lg.getString("lblPartnerIP"));
+		lblPartnerPort.setText(lg.getString("lblPartnerPort"));
+		lblPartnerPassword.setText(lg.getString("lblPartnerPassword"));
+		btnConnect.setText(lg.getString("btnConnect"));
+		mnFile.setText(lg.getString("mnFile"));
+		mntmClose.setText(lg.getString("mntmClose"));
+		mnSetting.setText(lg.getString("mnSetting"));
+		mnLanguage.setText(lg.getString("mnLanguage"));
+		mnHelp.setText(lg.getString("mnHelp"));
+		mntmManual.setText(lg.getString("mntmManual"));
+		mntmAbout.setText(lg.getString("mntmAbout"));
+		
+		txtYourIP.setToolTipText(lg.getString("tipYourIP"));
+		txtYourPort.setToolTipText(lg.getString("tipYourPort"));
+		txtYourPassword.setToolTipText(lg.getString("tipYourPassword"));
+		btnOpenConnect.setToolTipText(lg.getString("tipAllowConnection"));
+		txtPartnerIP.setToolTipText(lg.getString("tipPartnerIP"));
+		btnOpenchat.setToolTipText(lg.getString("tipOpenChat"));
+		txtPartnerPort.setToolTipText(lg.getString("tipPartnerPort"));
+		txtPartnerPassword.setToolTipText(lg.getString("tipPartnerPassword"));
+		btnConnect.setToolTipText(lg.getString("tipStartRemote"));
+		
+		msgOpenConnectFailed=lg.getString("msgOpenConnectFailed");
+		msgPortInvalid=lg.getString("msgPortInvalid");
+	}
 }
