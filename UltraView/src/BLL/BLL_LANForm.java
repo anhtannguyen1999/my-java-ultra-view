@@ -78,11 +78,11 @@ public class BLL_LANForm {
 		isOpenConnection=true;		
 	}
 	
-	public void ConnectAndShowRemoteForm(String ip,String port, String pass) {
+	public void ConnectAndShowRemoteForm(String ip,String port, String pass,int language) {
 		System.out.println("Connecting to "+ip+":"+port+" pass:"+pass);
 		boolean isSuccessConnect=true;//Viet 1 class/ham de try ket noi
 		if(isSuccessConnect) {
-			RemoteScreenForm.OpenForm(ip, port, pass);
+			RemoteScreenForm.OpenForm(ip, port, pass,language);
 		}
 	}
 	

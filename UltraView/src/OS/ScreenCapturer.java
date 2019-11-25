@@ -24,7 +24,7 @@ import GUI.RemoteScreenForm;
 public class ScreenCapturer {
 	public static void main(String[] args) throws InterruptedException {
 		ScreenCapturer testCaptureScreen=new ScreenCapturer();
-		RemoteScreenForm remoteScreenForm=new RemoteScreenForm("192.169.1.2", "1999", "");
+		RemoteScreenForm remoteScreenForm=new RemoteScreenForm("192.169.1.2", "1999", "",0);
 		while(true) {
 			Thread.sleep(40);
 			DTO_ArrayLANImageInforObject arrayLANImageInforObject=testCaptureScreen.GetLANScreenCaptureImageArray();

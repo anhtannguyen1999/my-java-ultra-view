@@ -42,6 +42,8 @@ import javax.swing.event.ChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.beans.PropertyChangeEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
@@ -54,21 +56,22 @@ import java.awt.FlowLayout;
 
 public class RemoteScreenForm extends JFrame {
 	public static void main(String[] args) {
-		OpenForm("192.168.1.135", "1999", "ahihi");
+		OpenForm("192.168.1.135", "1999", "ahihi",1);
 	}
 	//STATIC
 	//Check trang thai form chi mo 1 lan 1 form
 	public static RemoteScreenForm instance;
 	public static boolean isOpened=false;
-	public static void OpenForm(String ip, String port, String pass) {
+	public static void OpenForm(String ip, String port, String pass,int language) {
 		if(isOpened)
 			return;
 		else {
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
-						instance = new RemoteScreenForm(ip, port, pass);
+						instance = new RemoteScreenForm(ip, port, pass,language);
 						instance.setVisible(true);
+						instance.SetLanguage(language);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -95,7 +98,7 @@ public class RemoteScreenForm extends JFrame {
 	private JButton btnReOpenChat;
 	private JPanel panel_1;
 	private JLabel lblStatus;
-	public RemoteScreenForm(String ip, String port, String pass) {
+	public RemoteScreenForm(String ip, String port, String pass,int language) {
 		setFont(new Font("Tahoma", Font.PLAIN, 16));
 		setTitle("Remote screen");
 		addKeyListener(new KeyAdapter() {
@@ -151,7 +154,21 @@ public class RemoteScreenForm extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				isOpened=true;
 				//Goi BLL de mo thread get hinh
-				ShowStatus("Connecting to "+ip+":"+port+" pass: "+pass+"..." );
+
+				Locale locale=null;
+				switch (language) {
+				case 0://en
+					locale = new Locale("en");
+					break;
+				case 1://vi
+					locale = new Locale("vi");
+					break;
+				default:
+					locale = new Locale("en");
+					break;
+				}
+				lg=ResourceBundle.getBundle("internationalization.message.language", locale);
+				ShowStatus(lg.getString("sttConnectingTo")+ip+":"+port+" "+lg.getString("sttPass")+": "+pass+"..." );
 				
 				try {
 					bll_RemoteScreenForm.ConnectRemoteTo(ip, port, pass);
@@ -354,4 +371,31 @@ public class RemoteScreenForm extends JFrame {
 	public void ShowMessage(String message, String tile,int type) {
 		JOptionPane.showMessageDialog(this, message, tile, type);
 	}
+
+	private ResourceBundle lg=null;
+	public void SetLanguage(int language) {
+		Locale locale=null;
+		switch (language) {
+		case 0://en
+			locale = new Locale("en");
+			break;
+		case 1://vi
+			locale = new Locale("vi");
+			break;
+		default:
+			locale = new Locale("en");
+			break;
+		}
+		lg = ResourceBundle.getBundle("internationalization.message.language", locale);
+		chbxMouse.setText(lg.getString("chbxMouse"));
+		chbxKeys.setText(lg.getString("chbxKeys"));
+		this.setTitle(lg.getString("frmRemoteScreen"));
+	}
+	
+	public String GetLanguageString(String key) {
+		if(lg==null)
+			lg = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
+		return lg.getString(key);
+	}
+	
 }

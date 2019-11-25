@@ -22,7 +22,7 @@ import GUI.RemoteScreenForm;
 public class TestCaptureScreen {
 	public static void main(String[] args) throws InterruptedException {
 		TestCaptureScreen testCaptureScreen=new TestCaptureScreen();
-		RemoteScreenForm remoteScreenForm=new RemoteScreenForm("192.169.1.2", "1999", "ahihi");
+		RemoteScreenForm remoteScreenForm=new RemoteScreenForm("192.169.1.2", "1999", "ahihi",0);
 		while(true) {
 			Thread.sleep(40);
 			DTO_ArrayLANImageInforObject arrayLANImageInforObject=testCaptureScreen.GetLANScreenCaptureImageArray();

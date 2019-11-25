@@ -11,6 +11,8 @@ import java.awt.event.WindowEvent;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -236,11 +238,28 @@ public class LANForm extends JFrame {
 		menuBar.add(mnHelp);
 		
 		mntmManual = new JMenuItem("Manual");
+		mntmManual.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				try {
+					java.awt.Desktop.getDesktop().browse(new URI("https://github.com/anhtannguyen1999/NNLTJava-UltraView/blob/master/README.md"));
+				} catch (Exception e) {
+					ShowMessage("URL: https://github.com/anhtannguyen1999/NNLTJava-UltraView/blob/master/README.md",GetLanguageString("sttOpenBrowseFailed"),JOptionPane.ERROR_MESSAGE);
+				} 
+			}
+		});
 		mntmManual.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mntmManual.setBackground(Color.WHITE);
 		mnHelp.add(mntmManual);
 		
 		mntmAbout = new JMenuItem("About");
+		mntmAbout.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				ShowMessage(GetLanguageString("about"),mntmAbout.getText(),JOptionPane.INFORMATION_MESSAGE);
+				
+			}
+		});
 		mntmAbout.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		mntmAbout.setBackground(Color.WHITE);
 		mnHelp.add(mntmAbout);
@@ -463,7 +482,7 @@ public class LANForm extends JFrame {
 		btnConnect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				bll_LANForm.ConnectAndShowRemoteForm(txtPartnerIP.getText(),txtPartnerPort.getText(),txtPartnerPassword.getText());
+				bll_LANForm.ConnectAndShowRemoteForm(txtPartnerIP.getText(),txtPartnerPort.getText(),txtPartnerPassword.getText(),language);
 			}
 		});
 		
@@ -562,10 +581,15 @@ public class LANForm extends JFrame {
 	private ResourceBundle lg=null;
 	
 	public String GetLanguageString(String key) {
+		if(lg==null)
+			lg = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
 		return lg.getString(key);
 	}
 	
+	private int language=0;
+	
 	public void SetLanguage(int language) {
+		this.language=language;
 		Locale locale=null;
 		switch (language) {
 		case 0://en

@@ -103,13 +103,14 @@ public class LANClientThread extends Thread{
 		}
 		isReceivingImage=true;
 		
-
-		RemoteScreenForm.GetInstance().ShowStatus("Request has been sent to server at "+serverIP+":"+serverPort+" pass: "+pass);
+		remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttRequestsent")+serverIP+":"+serverPort+" pass: "+pass);
+		
 		System.out.println("Da gui yeu cau ket noi den: "+serverIP+":"+serverPort+" pass: "+pass);		
 	}
 	
 	public void DestroyClient() {
-		RemoteScreenForm.GetInstance().ShowStatus("Disconnected!");
+		remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttDisconnect"));
+		
 		System.out.println("Destroy client!");
 		isReceivingImage=false;
 		xacThucThanhCong=false;
@@ -140,7 +141,7 @@ public class LANClientThread extends Thread{
 				//System.out.println("Nhan hinh roi nhe!");
 			} catch (InterruptedException e) {
 				System.out.println("Loi nhan hinh in LoopReceiveImage");
-				RemoteScreenForm.GetInstance().ShowStatus("Receive image failed!");
+				remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttReceiveImgFailed"));
 			}
 			
 		}
@@ -160,7 +161,7 @@ public class LANClientThread extends Thread{
 		} catch (Exception e) { //Co gang tao client neu ket noi fail
 			System.out.println("Receive Image Failed!");
 			System.out.println(e.toString());
-			RemoteScreenForm.GetInstance().ShowStatus("Receive image failed!");
+			remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttReceiveImgFailed"));
 			try {
 				//StartClient();
 				
@@ -225,7 +226,7 @@ public class LANClientThread extends Thread{
 				} catch (Exception e) {
 					// TODO: handle exception
 					System.out.println("Loi xac thuc connect");
-					RemoteScreenForm.GetInstance().ShowStatus("Validation error!");
+					remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttValidationErr"));
 				}
 			}
 			java.lang.Runtime.getRuntime().gc();
@@ -244,7 +245,7 @@ public class LANClientThread extends Thread{
 							if(message.equals("XacThucThanhCong")) {
 								isXacThuc=true;
 								xacThucThanhCong=true;
-								RemoteScreenForm.GetInstance().ShowStatus("Connect successfully!");
+								remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttConnectSuccess"));
 								return;
 							}
 						} catch (Exception e) {
