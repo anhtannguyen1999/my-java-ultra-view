@@ -86,10 +86,11 @@ public class RemoteScreenForm extends JFrame {
 	
 	//Get instance cua BLL_RemoteScreenForm
 	private BLL_RemoteScreenForm bll_RemoteScreenForm=BLL_RemoteScreenForm.GetInstance();
-	private JPanel contentPane;
+	
 	private String ip,port,pass;
 
 	//Khoi tao GUI
+	private JPanel contentPane;
 	public JPanel panel;
 	public JCheckBox chbxMouse;
 	public JCheckBox chbxKeys;
@@ -167,8 +168,8 @@ public class RemoteScreenForm extends JFrame {
 					locale = new Locale("en");
 					break;
 				}
-				lg=ResourceBundle.getBundle("internationalization.message.language", locale);
-				ShowStatus(lg.getString("sttConnectingTo")+ip+":"+port+" "+lg.getString("sttPass")+": "+pass+"..." );
+				languageRB=ResourceBundle.getBundle("internationalization.message.language", locale);
+				ShowStatus(languageRB.getString("sttConnectingTo")+ip+":"+port+" "+languageRB.getString("sttPass")+": "+pass+"..." );
 				
 				try {
 					bll_RemoteScreenForm.ConnectRemoteTo(ip, port, pass);
@@ -345,6 +346,7 @@ public class RemoteScreenForm extends JFrame {
 		}
 	}
 	
+	//No used
 	public void ShowImageToPanel(DTO_LANImageInforObject lanIIO) {
 		if(lanIIO!=null) {
 			try {
@@ -372,7 +374,7 @@ public class RemoteScreenForm extends JFrame {
 		JOptionPane.showMessageDialog(this, message, tile, type);
 	}
 
-	private ResourceBundle lg=null;
+	private ResourceBundle languageRB=null;
 	public void SetLanguage(int language) {
 		Locale locale=null;
 		switch (language) {
@@ -386,16 +388,16 @@ public class RemoteScreenForm extends JFrame {
 			locale = new Locale("en");
 			break;
 		}
-		lg = ResourceBundle.getBundle("internationalization.message.language", locale);
-		chbxMouse.setText(lg.getString("chbxMouse"));
-		chbxKeys.setText(lg.getString("chbxKeys"));
-		this.setTitle(lg.getString("frmRemoteScreen"));
+		languageRB = ResourceBundle.getBundle("internationalization.message.language", locale);
+		chbxMouse.setText(languageRB.getString("chbxMouse"));
+		chbxKeys.setText(languageRB.getString("chbxKeys"));
+		this.setTitle(languageRB.getString("frmRemoteScreen"));
 	}
 	
 	public String GetLanguageString(String key) {
-		if(lg==null)
-			lg = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
-		return lg.getString(key);
+		if(languageRB==null)
+			languageRB = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
+		return languageRB.getString(key);
 	}
 	
 }

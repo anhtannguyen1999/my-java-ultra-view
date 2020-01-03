@@ -12,7 +12,7 @@ import javax.sound.sampled.TargetDataLine;
 
 import NET.LANAudioClient;
 
-public class BLL_LANAudioClient {
+public class BLL_LANAudioClient implements BLL_LANAudioChat {
 	
 	public static void main(String[] args) {
 		//Mo port 2000 va ket noi toi port 1999 cua server
@@ -22,9 +22,9 @@ public class BLL_LANAudioClient {
 		bll_LANAudioSender.StartReceivingAndSpeaking();
 	}
 	private static BLL_LANAudioClient instance=null;
-	public static BLL_LANAudioClient GetInstance(int clientPort,String serverIP, int serverPort) {
+	public static BLL_LANAudioClient GetInstance(int clientPort,String serverIp, int serverPort) {
 		if(instance==null) {
-			instance=new BLL_LANAudioClient(clientPort, serverIP, serverPort);
+			instance=new BLL_LANAudioClient(clientPort, serverIp, serverPort);
 		}
 		return instance;
 	}
@@ -46,22 +46,22 @@ public class BLL_LANAudioClient {
 	}
 	
 	//private boolean Sending =false;
-	private int port_server;
+	private int serverPort;
 	private int clientPort;
-	private String ip_sever;
+	private String serverIP;
 	private TargetDataLine audio_in;
 	private LANAudioClient lanAudioClientThread=null;
-	public BLL_LANAudioClient(int clientPort,String serverIP, int serverPort) {
-		ip_sever=serverIP;
-		port_server=serverPort;
+	public BLL_LANAudioClient(int clientPort,String serverIp, int serverPort) {
+		serverIP=serverIp;
+		this.serverPort=serverPort;
 		this.clientPort=clientPort;
 	}
 	
 	public void StartSocketAndInitAudio()
 	{
 		try {
-		InetAddress inet = InetAddress.getByName(ip_sever);
-		lanAudioClientThread =new LANAudioClient(clientPort,inet,port_server);
+		InetAddress inet = InetAddress.getByName(serverIP);
+		lanAudioClientThread =new LANAudioClient(clientPort,inet,serverPort);
 		//Sending =true;
 		}
 		catch(Exception ex)

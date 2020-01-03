@@ -83,6 +83,9 @@ public abstract class ChatForm extends JFrame {
 	 */	
 	public abstract void OpenAudioChat();
 	public abstract void CloseAudioChat();
+	public abstract void CloseChat();
+	public abstract void KhoiTaoEventSend();
+	public abstract void SendMessageInTextbox();
 	public ChatForm() {
 		setTitle("Chat");
 		addWindowListener(new WindowAdapter() {

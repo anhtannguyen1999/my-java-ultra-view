@@ -61,13 +61,13 @@ public class LANForm extends JFrame {
 	private JPanel contentPane;
 
 	public static boolean isOpened=false;
+	private BLL_LANForm bll_LANForm;
 	private JTextField txtYourIP;
 	private JTextField txtYourPort;
 	private JTextField txtYourPassword;
 	private JTextField txtPartnerIP;
 	private JTextField txtPartnerPort;
-	private JTextField txtPartnerPassword;
-	private BLL_LANForm bll_LANForm;
+	private JTextField txtPartnerPassword;	
 	private JLabel lblStatus;
 	private JLabel lblAllowConnection;
 	private JLabel lblRemoteAnother;
@@ -167,7 +167,7 @@ public class LANForm extends JFrame {
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		setBounds(100, 100, 806, 414);
+		setBounds(100, 100, 860, 414);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -277,7 +277,7 @@ public class LANForm extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(248, 248, 255));
-		panel.setBounds(5, 5, 789, 329);
+		panel.setBounds(5, 5, 837, 329);
 		panel.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		
 		JPanel pnlOpenCnn = new JPanel();
@@ -451,7 +451,7 @@ public class LANForm extends JFrame {
 		lblPartnerPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		txtPartnerIP = new JTextField();
-		txtPartnerIP.setBounds(118, 81, 216, 26);
+		txtPartnerIP.setBounds(141, 79, 216, 26);
 		txtPartnerIP.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerIP.setAlignmentY(Component.TOP_ALIGNMENT);
 		txtPartnerIP.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -459,14 +459,14 @@ public class LANForm extends JFrame {
 		
 		txtPartnerPort = new JTextField();
 		txtPartnerPort.setText("1999");
-		txtPartnerPort.setBounds(118, 121, 216, 26);
+		txtPartnerPort.setBounds(141, 119, 216, 26);
 		txtPartnerPort.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerPort.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		txtPartnerPort.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		txtPartnerPort.setColumns(10);
 		
 		txtPartnerPassword = new JTextField();
-		txtPartnerPassword.setBounds(119, 161, 216, 26);
+		txtPartnerPassword.setBounds(142, 159, 216, 26);
 		txtPartnerPassword.setAlignmentY(Component.TOP_ALIGNMENT);
 		txtPartnerPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 		txtPartnerPassword.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -474,7 +474,7 @@ public class LANForm extends JFrame {
 		
 		btnConnect = new JButton("Start Remote");
 		btnConnect.setBackground(SystemColor.control);
-		btnConnect.setBounds(168, 200, 166, 29);
+		btnConnect.setBounds(181, 198, 176, 29);
 		btnConnect.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		btnConnect.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		btnConnect.setFocusable(false);
@@ -516,11 +516,14 @@ public class LANForm extends JFrame {
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(panel_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(pnlOpenCnn, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
-					.addGap(18)
-					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlRemoteForm, GroupLayout.PREFERRED_SIZE, 352, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 342, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap())
+					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(pnlRemoteForm, GroupLayout.PREFERRED_SIZE, 401, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panel.createSequentialGroup()
+							.addGap(31)
+							.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 342, GroupLayout.PREFERRED_SIZE)))
+					.addGap(12))
 		);
 		gl_panel.setVerticalGroup(
 			gl_panel.createParallelGroup(Alignment.LEADING)
@@ -531,8 +534,8 @@ public class LANForm extends JFrame {
 						.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(pnlOpenCnn, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-						.addComponent(pnlRemoteForm, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))
+						.addComponent(pnlRemoteForm, GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+						.addComponent(pnlOpenCnn, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		pnlRemoteForm.setLayout(null);
@@ -578,12 +581,12 @@ public class LANForm extends JFrame {
 	}
 	
 	
-	private ResourceBundle lg=null;
+	private ResourceBundle languageRB=null;
 	
 	public String GetLanguageString(String key) {
-		if(lg==null)
-			lg = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
-		return lg.getString(key);
+		if(languageRB==null)
+			languageRB = ResourceBundle.getBundle("internationalization.message.language", new Locale("en"));
+		return languageRB.getString(key);
 	}
 	
 	private int language=0;
@@ -602,38 +605,38 @@ public class LANForm extends JFrame {
 			locale = new Locale("en");
 			break;
 		}
-		lg = ResourceBundle.getBundle("internationalization.message.language", locale);
-		lblAllowConnection.setText(lg.getString("lblAllowConnection"));
-		lblRemoteAnother.setText(lg.getString("lblRemoteAnother"));
-		lblInfoAllowConnection.setText(lg.getString("lblInfoAllowConnection"));
-		lblInfoRemoteAnother.setText(lg.getString("lblInfoRemoteAnother"));
-		lblYourIP.setText(lg.getString("lblYourIP"));
-		lblYourPort.setText(lg.getString("lblYourPort"));
-		lblYourPassword.setText(lg.getString("lblYourPassword"));
-		btnOpenConnect.setText(lg.getString("btnOpenConnect"));
-		lblPartnerIP.setText(lg.getString("lblPartnerIP"));
-		lblPartnerPort.setText(lg.getString("lblPartnerPort"));
-		lblPartnerPassword.setText(lg.getString("lblPartnerPassword"));
-		btnConnect.setText(lg.getString("btnConnect"));
-		mnFile.setText(lg.getString("mnFile"));
-		mntmClose.setText(lg.getString("mntmClose"));
-		mnSetting.setText(lg.getString("mnSetting"));
-		mnLanguage.setText(lg.getString("mnLanguage"));
-		mnHelp.setText(lg.getString("mnHelp"));
-		mntmManual.setText(lg.getString("mntmManual"));
-		mntmAbout.setText(lg.getString("mntmAbout"));
+		languageRB = ResourceBundle.getBundle("internationalization.message.language", locale);
+		lblAllowConnection.setText(languageRB.getString("lblAllowConnection"));
+		lblRemoteAnother.setText(languageRB.getString("lblRemoteAnother"));
+		lblInfoAllowConnection.setText(languageRB.getString("lblInfoAllowConnection"));
+		lblInfoRemoteAnother.setText(languageRB.getString("lblInfoRemoteAnother"));
+		lblYourIP.setText(languageRB.getString("lblYourIP"));
+		lblYourPort.setText(languageRB.getString("lblYourPort"));
+		lblYourPassword.setText(languageRB.getString("lblYourPassword"));
+		btnOpenConnect.setText(languageRB.getString("btnOpenConnect"));
+		lblPartnerIP.setText(languageRB.getString("lblPartnerIP"));
+		lblPartnerPort.setText(languageRB.getString("lblPartnerPort"));
+		lblPartnerPassword.setText(languageRB.getString("lblPartnerPassword"));
+		btnConnect.setText(languageRB.getString("btnConnect"));
+		mnFile.setText(languageRB.getString("mnFile"));
+		mntmClose.setText(languageRB.getString("mntmClose"));
+		mnSetting.setText(languageRB.getString("mnSetting"));
+		mnLanguage.setText(languageRB.getString("mnLanguage"));
+		mnHelp.setText(languageRB.getString("mnHelp"));
+		mntmManual.setText(languageRB.getString("mntmManual"));
+		mntmAbout.setText(languageRB.getString("mntmAbout"));
 		
-		txtYourIP.setToolTipText(lg.getString("tipYourIP"));
-		txtYourPort.setToolTipText(lg.getString("tipYourPort"));
-		txtYourPassword.setToolTipText(lg.getString("tipYourPassword"));
-		btnOpenConnect.setToolTipText(lg.getString("tipAllowConnection"));
-		txtPartnerIP.setToolTipText(lg.getString("tipPartnerIP"));
-		btnOpenchat.setToolTipText(lg.getString("tipOpenChat"));
-		txtPartnerPort.setToolTipText(lg.getString("tipPartnerPort"));
-		txtPartnerPassword.setToolTipText(lg.getString("tipPartnerPassword"));
-		btnConnect.setToolTipText(lg.getString("tipStartRemote"));
+		txtYourIP.setToolTipText(languageRB.getString("tipYourIP"));
+		txtYourPort.setToolTipText(languageRB.getString("tipYourPort"));
+		txtYourPassword.setToolTipText(languageRB.getString("tipYourPassword"));
+		btnOpenConnect.setToolTipText(languageRB.getString("tipAllowConnection"));
+		txtPartnerIP.setToolTipText(languageRB.getString("tipPartnerIP"));
+		btnOpenchat.setToolTipText(languageRB.getString("tipOpenChat"));
+		txtPartnerPort.setToolTipText(languageRB.getString("tipPartnerPort"));
+		txtPartnerPassword.setToolTipText(languageRB.getString("tipPartnerPassword"));
+		btnConnect.setToolTipText(languageRB.getString("tipStartRemote"));
 		
-		msgOpenConnectFailed=lg.getString("msgOpenConnectFailed");
-		msgPortInvalid=lg.getString("msgPortInvalid");
+		msgOpenConnectFailed=languageRB.getString("msgOpenConnectFailed");
+		msgPortInvalid=languageRB.getString("msgPortInvalid");
 	}
 }

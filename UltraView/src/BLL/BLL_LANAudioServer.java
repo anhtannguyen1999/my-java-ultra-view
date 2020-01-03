@@ -14,7 +14,7 @@ import NET.LANAudioServer;
 import OS.Audio;
 
 
-public class BLL_LANAudioServer {
+public class BLL_LANAudioServer implements BLL_LANAudioChat{
 	public static void main(String[] args) {
 		BLL_LANAudioServer bll_LANAudioServer=new BLL_LANAudioServer(1999);
 		bll_LANAudioServer.StartSocketAndInitAudio();
@@ -93,6 +93,7 @@ public class BLL_LANAudioServer {
 			
 		}	
 	}
+	
 	public void SetClientIPAndPort(String clientIP,int clientPort) {
 		if(lanAudioServerThread==null)
 			StartSocketAndInitAudio();

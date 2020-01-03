@@ -14,18 +14,18 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
-import NET.LANAudioClient.ClientAudioSenderThread;
+
 import OS.Audio;
 ;
 
 public class LANAudioServer
 {
-	private SourceDataLine audio_out =null;
+	private SourceDataLine audioOut =null;
 	private DatagramSocket datagramSocket;
 	
-	private InetAddress client_ip;
-	private int client_port;
-	private int server_port;
+	private InetAddress clientIP;
+	private int clientPort;
+	private int serverPort;
 	private boolean isCalling;
 	private AudioFormat format;
 	//DataLine.Info info;
@@ -33,15 +33,15 @@ public class LANAudioServer
 		StartServer(port);
 		InitAudio();
 	}
-	public void SetClientIPAndPort(InetAddress clientIP,int clientPort) {
-		client_ip=clientIP;
-		client_port=clientPort;
+	public void SetClientIPAndPort(InetAddress clientip,int clientport) {
+		clientIP=clientip;
+		clientPort=clientport;
 	}
 	private void StartServer(int port) {
-		server_port=port;
+		serverPort=port;
 		try {
-			System.out.println("Open server audio at "+server_port);
-			datagramSocket=new DatagramSocket(server_port);
+			System.out.println("Open server audio at "+serverPort);
+			datagramSocket=new DatagramSocket(serverPort);
 		} catch (SocketException e) {
 			System.out.println("AudioServer Exception: create UDP fail");
 		}		
@@ -62,8 +62,8 @@ public class LANAudioServer
 			return;
 		}
 		try {
-			audio_out = (SourceDataLine)AudioSystem.getLine(infoOut);
-			audio_in=(TargetDataLine)AudioSystem.getLine(infoIn);
+			audioOut = (SourceDataLine)AudioSystem.getLine(infoOut);
+			audioIn=(TargetDataLine)AudioSystem.getLine(infoIn);
 		} catch (LineUnavailableException e) {
 			System.out.println("LANAudioServerThread Exception: init audioout faild");
 		}
@@ -71,7 +71,7 @@ public class LANAudioServer
 	}
 	private void OpenAudioOut() {
 		try {
-			audio_out.open(format);
+			audioOut.open(format);
 		} catch (LineUnavailableException e) {
 			System.out.println("LANAudioServerThread Exception: open audioout faild");
 		}
@@ -91,13 +91,13 @@ public class LANAudioServer
 	@SuppressWarnings("deprecation")
 	public void StopReceiveAndSpeak() {
 		isCalling=false;
-		audio_out.stop();
+		audioOut.stop();
 		if(serverAudioReceiverThread!=null) {
 			serverAudioReceiverThread.interrupt();
 			//serverAudioReceiverThread.stop();
 			serverAudioReceiverThread=null;
 		}
-		//audio_out.flush();
+		//audioOut.flush();
 	}
 	public class ServerAudioReceiverThread extends Thread{
 		private byte byte_buff[]= new byte[512];
@@ -106,7 +106,7 @@ public class LANAudioServer
 		{
 			super.run();
 			OpenAudioOut();
-			audio_out.start();
+			audioOut.start();
 			isCalling=true;
 			int i=0;
 			while (isCalling)
@@ -115,7 +115,7 @@ public class LANAudioServer
 				try {
 					datagramSocket.receive(data);
 					byte_buff =data.getData();
-					audio_out.write(byte_buff, 0, byte_buff.length);
+					audioOut.write(byte_buff, 0, byte_buff.length);
 					Thread.sleep(2);
 				}
 				catch(Exception ex)
@@ -123,8 +123,8 @@ public class LANAudioServer
 					System.out.println("AudioServerERR: receiver Socket NULL: "+ex);
 				}
 			}
-			audio_out.close();
-			audio_out.drain();
+			audioOut.close();
+			audioOut.drain();
 			System.out.println("player stop");
 		}
 	}
@@ -132,39 +132,39 @@ public class LANAudioServer
 	
 	
 	//Record and send
-	private ClientAudioSenderThread clientAudioSenderThread=null;
+	private ServerAudioSenderThread serverAudioSenderThread=null;
 	public void RecordAndSend() {
-		if(clientAudioSenderThread==null)
-			clientAudioSenderThread=new ClientAudioSenderThread();
-		clientAudioSenderThread.start();
+		if(serverAudioSenderThread==null)
+			serverAudioSenderThread=new ServerAudioSenderThread();
+		serverAudioSenderThread.start();
 	}
 
-	private TargetDataLine audio_in =null;
+	private TargetDataLine audioIn =null;
 	public void StopRecordAndSend() {
 		isRecordAndSend=false;
-		audio_in.stop();
-		if(clientAudioSenderThread!=null) {
-			clientAudioSenderThread.interrupt();
-			clientAudioSenderThread=null;
+		audioIn.stop();
+		if(serverAudioSenderThread!=null) {
+			serverAudioSenderThread.interrupt();
+			serverAudioSenderThread=null;
 		}
 	}
 	
 	private boolean isRecordAndSend=false;
-	public class ClientAudioSenderThread extends Thread {
+	public class ServerAudioSenderThread extends Thread {
 		private byte byte_buff[]= new byte[512];
 		@Override
 		public void run() {
 			super.run();
 			OpenAudioIn();
-			audio_in.start();
+			audioIn.start();
 			isRecordAndSend=true;
 			//int i=0;
 			while (isRecordAndSend)
 			{
 				try
 				{
-					audio_in.read(byte_buff, 0, byte_buff.length);
-					DatagramPacket data =new DatagramPacket(byte_buff,byte_buff.length,client_ip,client_port);
+					audioIn.read(byte_buff, 0, byte_buff.length);
+					DatagramPacket data =new DatagramPacket(byte_buff,byte_buff.length,clientIP,clientPort);
 					//System.out.println("send "+i++);
 //					if(i>1000) 
 //						i=0;
@@ -177,14 +177,14 @@ public class LANAudioServer
 				}
 		
 			}
-			audio_in.close();
-			audio_in.drain();
+			audioIn.close();
+			audioIn.drain();
 			System.out.println("AudioServerERR: Recroder stop!");
 		}
 
 		private void OpenAudioIn() {
 			try {
-				audio_in.open(format);
+				audioIn.open(format);
 			} catch (LineUnavailableException e) {
 				// TODO Auto-generated catch block
 				System.out.println("LANAudioServerThread Exception: open audioin faild");

@@ -53,7 +53,7 @@ public class LANClientThread extends Thread{
 	public void run() {
 		StartClient();
 		int countXacThucFaild=0;
-		while(!xacThucThanhCong) {
+		while(!isXacThucThanhCong) {
 			countXacThucFaild++;
 			try {
 				Thread.sleep(30);
@@ -64,7 +64,7 @@ public class LANClientThread extends Thread{
 				countXacThucFaild=0;
 			}
 		}
-		if(xacThucThanhCong) {
+		if(isXacThucThanhCong) {
 			System.out.println("Chay client thanh cong!");
 			//OK KET NOI Mo Khung chat
 			BLL_RemoteScreenForm.GetInstance().OpenChatWindow(serverIP,serverPort+1);
@@ -113,7 +113,7 @@ public class LANClientThread extends Thread{
 		
 		System.out.println("Destroy client!");
 		isReceivingImage=false;
-		xacThucThanhCong=false;
+		isXacThucThanhCong=false;
 		try {
 			oos.close();
 			os.close();
@@ -153,10 +153,7 @@ public class LANClientThread extends Thread{
 		if(arrLANIIO!=null)
 			arrLANIIO.Clear();
 		arrLANIIO=null;
-		
 		try {
-			//imi=(ImageIcon) ois.readObject();
-			
 			arrLANIIO=(DTO_ArrayLANImageInforObject) ois.readObject();
 		} catch (Exception e) { //Co gang tao client neu ket noi fail
 			System.out.println("Receive Image Failed!");
@@ -164,9 +161,7 @@ public class LANClientThread extends Thread{
 			remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttReceiveImgFailed"));
 			try {
 				//StartClient();
-				
-			}catch (Exception e2) {
-			}
+			}catch (Exception e2) {}
 		}
 		if (arrLANIIO!=null){
 			remoteScreenForm.ShowImageToPanel(arrLANIIO);
@@ -186,9 +181,7 @@ public class LANClientThread extends Thread{
 				isReceivingImage=false;
 				DestroyClient();
 			}
-				
 		}
-		
 	}
 	
 	public void SendMessage(String message) {
@@ -201,7 +194,8 @@ public class LANClientThread extends Thread{
 		}
 	}
 	
-	private boolean xacThucThanhCong=false;
+	private boolean isXacThucThanhCong=false;
+	
 	public class ThreadGuiNhanYeuCauXacThuc extends Thread{
 		public ThreadGuiNhanYeuCauXacThuc() {
 			// TODO Auto-generated constructor stub
@@ -222,7 +216,6 @@ public class LANClientThread extends Thread{
 						dangGet=true;
 						Thread.sleep(100);
 					}
-					
 				} catch (Exception e) {
 					// TODO: handle exception
 					System.out.println("Loi xac thuc connect");
@@ -244,7 +237,7 @@ public class LANClientThread extends Thread{
 							String message= (String)ois.readObject();
 							if(message.equals("XacThucThanhCong")) {
 								isXacThuc=true;
-								xacThucThanhCong=true;
+								isXacThucThanhCong=true;
 								remoteScreenForm.ShowStatus(remoteScreenForm.GetLanguageString("sttConnectSuccess"));
 								return;
 							}
@@ -254,7 +247,6 @@ public class LANClientThread extends Thread{
 							dangGet=false;
 						} 
 					}
-					
 				}
 			}
 		}

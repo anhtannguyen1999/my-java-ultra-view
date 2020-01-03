@@ -9,22 +9,22 @@ import OS.Audio;
 
 public class LANAudioClient {
 		
-	public LANAudioClient(int clientPort, InetAddress serverIP,int serverPort) {
-		StartClient(clientPort,serverIP, serverPort);
+	public LANAudioClient(int clientPort, InetAddress serverIp,int serverport) {
+		StartClient(clientPort,serverIp, serverport);
 		InitAudio();
 	}
 	
-	private void StartClient(int clientPort,InetAddress serverIP,int serverPort) {
+	private void StartClient(int clientPort,InetAddress serverIp,int serverport) {
 		try {
 			System.out.println("Chuan bi mo client audio");
 			datagramSocket=new DatagramSocket(clientPort);
-			System.out.println("Open client audio at "+clientPort +" And connect to "+serverIP.toString()+":"+serverPort);
+			System.out.println("Open client audio at "+clientPort +" And connect to "+serverIp.toString()+":"+serverport);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			System.out.println("LANAudioClientThread Exception: create UDP faild");
 		}
-		server_ip=serverIP;
-		server_port=serverPort;
+		serverIP=serverIp;
+		serverPort=serverport;
 	}
 	private AudioFormat format;
 	private void InitAudio() {
@@ -43,8 +43,8 @@ public class LANAudioClient {
 			return;
 		}
 		try {
-			audio_in = (TargetDataLine)AudioSystem.getLine(infoIn);
-			audio_out=(SourceDataLine)AudioSystem.getLine(infoOut);
+			audioIn = (TargetDataLine)AudioSystem.getLine(infoIn);
+			audioOut=(SourceDataLine)AudioSystem.getLine(infoOut);
 		} catch (LineUnavailableException e) {
 			// TODO Auto-generated catch block
 			System.out.println("LANAudioClientThread Exception: create audioin faild");
@@ -55,19 +55,19 @@ public class LANAudioClient {
 	
 	private void OpenAudioIn() {
 		try {
-			audio_in.open(format);
+			audioIn.open(format);
 		} catch (LineUnavailableException e) {
 			// TODO Auto-generated catch block
-			System.out.println("LANAudioClientThread Exception: open audioin faild");
+			System.out.println("LANAudioClientThread Exception: open audioin faild +" +e.toString());
 		}
 	}
 	
-	private TargetDataLine audio_in =null;
-	private SourceDataLine audio_out =null;
+	private TargetDataLine audioIn =null;
+	private SourceDataLine audioOut =null;
 	private DatagramSocket datagramSocket;
 
-	private InetAddress server_ip;
-	private int server_port;
+	private InetAddress serverIP;
+	private int serverPort;
 	private boolean isRecordAndSend;
 	private ClientAudioSenderThread clientAudioSenderThread;
 	
@@ -79,7 +79,7 @@ public class LANAudioClient {
 	
 	public void StopRecordAndSend() {
 		isRecordAndSend=false;
-		audio_in.stop();
+		audioIn.stop();
 		if(clientAudioSenderThread!=null) {
 			clientAudioSenderThread.interrupt();
 			clientAudioSenderThread=null;
@@ -98,7 +98,7 @@ public class LANAudioClient {
 
 	public void StopReceiveAndSpeak() {
 		isReceiveAndSpeak=false;
-		audio_out.stop();
+		audioOut.stop();
 		if(clientAudioReceiverThread!=null) {
 			clientAudioReceiverThread.interrupt();
 			clientAudioReceiverThread=null;
@@ -111,31 +111,28 @@ public class LANAudioClient {
 		public void run() {
 			super.run();
 			OpenAudioIn();
-			audio_in.start();
+			audioIn.start();
 			isRecordAndSend=true;
 			int i=0;
 			while (isRecordAndSend)
-			{
-				
+			{	
 				try
 				{
-					audio_in.read(byte_buff, 0, byte_buff.length);
-					DatagramPacket data =new DatagramPacket(byte_buff,byte_buff.length,server_ip,server_port);
+					audioIn.read(byte_buff, 0, byte_buff.length);
+					DatagramPacket data =new DatagramPacket(byte_buff,byte_buff.length,serverIP,serverPort);
 //					System.out.println("send "+i++);
 //					if(i>1000) 
 //						i=0;
 					datagramSocket.send(data);
 					Thread.sleep(2);
-					
 				}
 				catch(Exception ex)
 				{
 					System.out.println("AudioClientERR: Server NULL: "+ex);
 				}
-		
 			}
-			audio_in.close();
-			audio_in.drain();
+			audioIn.close();
+			audioIn.drain();
 			System.out.println("AudioClientERR: Recroder stop!");
 		}
 	}
@@ -149,28 +146,28 @@ public class LANAudioClient {
 			super.run();
 			//System.out.println("Client Nhan audio tu: "+datagramSocket.getPort()+" MY PORT: "+datagramSocket.getLocalPort());
 			OpenAudioOut();
-			audio_out.start();
+			audioOut.start();
 			isReceiveAndSpeak=true;
 			while(isReceiveAndSpeak) {
 				DatagramPacket data =new DatagramPacket(byte_buff,byte_buff.length);
 				try {
 					datagramSocket.receive(data);
 					byte_buff =data.getData();
-					audio_out.write(byte_buff, 0, byte_buff.length);
+					audioOut.write(byte_buff, 0, byte_buff.length);
 					Thread.sleep(2);
 				}catch (Exception e) {
 					System.out.println("AudioClientERR: Socket NULL: "+e);
 				}
 			}
-			audio_out.close();
-			audio_out.drain();
+			audioOut.close();
+			audioOut.drain();
 			System.out.println("player stop");
 		}
 	}
 
 	private void OpenAudioOut() {
 		try {
-			audio_out.open(format);
+			audioOut.open(format);
 		} catch (LineUnavailableException e) {
 			System.out.println("LANAudioClientThread Exception: open audioout faild");
 		}

@@ -99,15 +99,13 @@ public class ScreenCapturer {
    	 	gridHeight=screenFullImage.getHeight()/16;
    	 	screenFullImage.flush();
 	}
-
+	
 	public DTO_ArrayLANImageInforObject GetLANScreenCaptureImageArray() {
         if(screenFullImage!=null) {
        	 screenFullImage.flush();
         }
-
    	 java.lang.Runtime.getRuntime().gc();
-        screenFullImage = robot.createScreenCapture(screenRect); //ImageIO.write(screenFullImage, "jpg", new File(fileName));
-        
+        screenFullImage = robot.createScreenCapture(screenRect); //ImageIO.write(screenFullImage, "jpg", new File(fileName));  
         ImageIcon imgScrop;
         arrOIP=new DTO_ArrayLANImageInforObject();
         for(int i=0;i<numGridMatrixOIP;i++)//row |
@@ -119,7 +117,7 @@ public class ScreenCapturer {
        			 matrixOIP[j][i]= oip;
        			 arrOIP.Add(oip);
        		 }
-       		 else if(!isEqualToArrElement(oip,j,i)) { //Phai sua lai: neu co thay doi thi cap nhat lai matrix va send di 
+       		 else if(!isEqualToArrElement(oip,j,i)) { //So sanh voi cai mang hinh cu 
        			 ((DTO_LANImageInforObject)matrixOIP[j][i]).reset();
        			 matrixOIP[j][i]= oip;
        			 arrOIP.Add(oip);
@@ -129,7 +127,6 @@ public class ScreenCapturer {
        			 timeCountMatrixOIP[j][i]=0;
        	 }
         return arrOIP;
-       
    }
 
 	public boolean isEqualToArrElement(DTO_LANImageInforObject oip, int x,int y) {

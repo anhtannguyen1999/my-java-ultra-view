@@ -83,6 +83,7 @@ public class ServerChatForm extends ChatForm {
 		
 	}
 	
+	@Override
 	public void KhoiTaoEventSend() {
 		//Khoi tao event send
 			btnSend.addActionListener(new ActionListener() {
@@ -116,6 +117,7 @@ public class ServerChatForm extends ChatForm {
 				
 			});
 	}
+	@Override
 	public void SendMessageInTextbox() {
 		try {
 			if(!txtText.getText().equals("")) {
@@ -174,7 +176,7 @@ public class ServerChatForm extends ChatForm {
 		// TODO Auto-generated method stub
 		BLL_LANAudioServer.RemoveInstance();
 	}
-
+	@Override
 	public void CloseChat() {
 		// TODO Auto-generated method stub
 		bll_LANServerChat.Stop();

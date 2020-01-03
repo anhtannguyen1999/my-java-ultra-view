@@ -33,7 +33,7 @@ public class LANServerThread extends Thread {
 	//private static BufferedOutputStream bout;// = new BufferedOutputStream(os);
 	private static MouseKeyExcuter mouseKeyExcuter;
 	private LANServerMessageReceiver messageReceiver;
-	private boolean runningMessageReceive=false;
+	private boolean isRunningMessageReceive=false;
 	private LANForm lanFormInstance=null;
 	
 	public LANServerThread(int port, String pass) {
@@ -51,7 +51,7 @@ public class LANServerThread extends Thread {
 	}
 	public void ResetServer() {
 		try {
-			runningMessageReceive=false;
+			isRunningMessageReceive=false;
 			//messageReceiver=null; //Khong bo cai nay vi duoc khai bao o tren ham khoi tao
 			messageReceiver=new LANServerMessageReceiver();
 			if(oos!=null)
@@ -95,7 +95,7 @@ public class LANServerThread extends Thread {
 			ss.close();
 			ss=null;
 			clientInfor=null;
-			arrayLANImageInforObject.Clear();
+			arrLANIIO.Clear();
 			java.lang.Runtime.getRuntime().gc();
 			StartServer();
 		} catch (Exception e) {
@@ -112,7 +112,6 @@ public class LANServerThread extends Thread {
 			}catch(Exception e){
 				System.out.println(e);
 			}
-			
 			while (clientInfor==null) {
 				//TAT KHUNG CHAT neu co
 				try {
@@ -129,12 +128,12 @@ public class LANServerThread extends Thread {
 				lanFormInstance.ShowStatus(lanFormInstance.GetLanguageString("sttAClientTryingConnect"));
 				is = s.getInputStream();
 				ois = new ObjectInputStream(is);
-								
+				
 				//Lay may thong diep client gui toi
 				String message = (String) ois.readObject();
 				System.out.println("Reading messge");
                 
-              //Neu check pass dung va chua co client nao ket noi thi gan clientinfor
+				//Neu check pass dung va chua co client nao ket noi thi gan clientinfor
                 if(message.equals("RequireConnect:"+pass)&&clientInfor==null) {
                 	clientInfor=new LANSocketInfor(s.getInetAddress(), s.getPort());
                 	System.out.println("Pass chinh xac, start sending image to"+clientInfor.getIp().toString()+":"+clientInfor.getPort());
@@ -142,11 +141,6 @@ public class LANServerThread extends Thread {
                 	
                 	//Khoi tao cac output stream
                 	os = s.getOutputStream();
-                	
-                	//Buffer
-    	        	//bout = new BufferedOutputStream(os);
-
-    				//oos = new ObjectOutputStream(bout);
                 	oos = new ObjectOutputStream(os);
     				oos.writeObject("XacThucThanhCong");
     				oos.reset();
@@ -155,7 +149,8 @@ public class LANServerThread extends Thread {
                 		//OK KET NOI Mo Khung chat
                 		BLL_LANForm.GetInstance().OpenChatWindow(port+1);
                 		
-                		lanFormInstance.ShowStatus(lanFormInstance.GetLanguageString("sttStartSendImg")+clientInfor.getIp().toString()+":"+clientInfor.getPort());
+                		lanFormInstance.ShowStatus(lanFormInstance.GetLanguageString("sttStartSendImg")+clientInfor.getIp().toString()
+                									+":"+clientInfor.getPort());
                 		System.out.println("Chuan bi gui hinh");
             			LoopSendImage();
             		} catch (Exception e) {
@@ -180,24 +175,23 @@ public class LANServerThread extends Thread {
 		}
 	}
 
-	private DTO_ArrayLANImageInforObject arrayLANImageInforObject=null;
+	private DTO_ArrayLANImageInforObject arrLANIIO=null;
 	private void LoopSendImage() {
 		ScreenCapturer screenCapturer=new ScreenCapturer();
-
-		runningMessageReceive=true;		
+		isRunningMessageReceive=true;		
 		messageReceiver.start();
 		int countFaild=0;
 		while(true) {
 			try {
     	         Thread.sleep(40);
     	         //Convert to byte
-    	         arrayLANImageInforObject=screenCapturer.GetLANScreenCaptureImageArray();
-    	         if (arrayLANImageInforObject.arr.size()==0) {
+    	         arrLANIIO=screenCapturer.GetLANScreenCaptureImageArray();
+    	         if (arrLANIIO.arr.size()==0) {
     	        	 continue;
     	         }
     	         try {
-    	 			oos.writeObject(arrayLANImageInforObject);
-    	 			arrayLANImageInforObject.Clear();
+    	 			oos.writeObject(arrLANIIO);
+    	 			arrLANIIO.Clear();
     	 			oos.flush();
     	 			os.flush();
     	 			oos.reset();
@@ -219,7 +213,6 @@ public class LANServerThread extends Thread {
     	    }
 		}
 		ResetServer();
-		
 	}
 	
 	public class LANServerMessageReceiver extends Thread{
@@ -227,7 +220,7 @@ public class LANServerThread extends Thread {
 		public void run() {
 			super.run();
 			int countFaild=0;
-			while(runningMessageReceive) {
+			while(isRunningMessageReceive) {
 				String message="";
 				try {
 					message = (String) ois.readObject();
@@ -254,7 +247,7 @@ public class LANServerThread extends Thread {
 	
 	public void CloseServer() {
 		try {
-			runningMessageReceive=false;
+			isRunningMessageReceive=false;
 			if(oos!=null)
 				try {
 					oos.reset();
@@ -290,7 +283,7 @@ public class LANServerThread extends Thread {
 			ss.close();
 			ss=null;
 			clientInfor=null;
-			arrayLANImageInforObject.Clear();
+			arrLANIIO.Clear();
 			messageReceiver.interrupt();
 			java.lang.Runtime.getRuntime().gc();
 		}catch (Exception e) {
