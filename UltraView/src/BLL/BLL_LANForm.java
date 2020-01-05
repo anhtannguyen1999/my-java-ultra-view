@@ -90,6 +90,9 @@ public class BLL_LANForm {
 		String ip;
 		ArrayList<String>arrIP=new ArrayList<>();
 		ArrayList<String>arrIPName=new ArrayList<>();
+		
+		
+		
 		try {
 		    Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 		    while (interfaces.hasMoreElements()) {
@@ -116,7 +119,8 @@ public class BLL_LANForm {
 		ip="";
 		//return cai nao co wireless
 		for(int i=0;i<arrIPName.size();i++) {
-			if(arrIPName.get(i).toLowerCase().contains("wireless")||arrIPName.get(i).toLowerCase().contains("lan")) {
+			if(arrIPName.get(i).toLowerCase().contains("wireless")||arrIPName.get(i).toLowerCase().contains("lan")||
+			(arrIPName.get(i).toLowerCase().contains("ethernet")&&!arrIPName.get(i).toLowerCase().contains("virtual"))) {
 				System.out.println(arrIPName.get(i)+" ; "+arrIP.get(i));
 				return arrIP.get(i);
 			}
